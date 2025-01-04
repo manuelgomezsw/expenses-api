@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import "expenses-api/internal/infraestructure/router"
 
+func main() {
+	router.StartApp()
 }
