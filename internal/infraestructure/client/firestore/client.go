@@ -7,6 +7,12 @@ import (
 	"sync"
 )
 
+const (
+	projectID      = "quotes-api-100"
+	collectionName = "expenses-api"
+	documentName   = "config"
+)
+
 var (
 	clientFirestore *firestore.Client
 	once            sync.Once
@@ -16,7 +22,7 @@ func init() {
 	once.Do(func() {
 		var err error
 
-		clientFirestore, err = firestore.NewClient(context.Background(), "quotes-api-100")
+		clientFirestore, err = firestore.NewClient(context.Background(), projectID)
 		if err != nil {
 			log.Fatalf("Error creating Firestore client: %v", err)
 		}
@@ -24,7 +30,7 @@ func init() {
 }
 
 func GetValue(key string) (string, error) {
-	doc, err := clientFirestore.Collection("quotes-api").Doc("config").Get(context.Background())
+	doc, err := clientFirestore.Collection(collectionName).Doc(documentName).Get(context.Background())
 	if err != nil {
 		return "", err
 	}
