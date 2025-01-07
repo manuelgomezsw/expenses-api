@@ -1,6 +1,7 @@
 package router
 
 import (
+	"expenses-api/internal/infraestructure/controller/expenses"
 	"expenses-api/internal/infraestructure/controller/paymentstype"
 	"expenses-api/internal/infraestructure/controller/pockets"
 	"github.com/gin-gonic/gin"
@@ -13,11 +14,12 @@ func mapURLs(router *gin.Engine) {
 }
 
 func expensesUrls(router *gin.Engine) {
-	//router.GET("/payments/type", paymentstype.Get)
-	//router.GET("/payments/type/:payment_type_id", paymentstype.GetByID)
-	//router.POST("/payments/type", paymentstype.Create)
-	//router.PUT("/payments/type/:payment_type_id", paymentstype.Update)
-	//router.DELETE("/payments/type/:payment_type_id", paymentstype.Delete)
+	router.GET("/expenses/pocket/:pocket_id", expenses.GetByPocketID)
+	router.GET("/expenses/payment/type/:payment_type_id", expenses.GetByPaymentTypeID)
+	router.GET("/expenses/:expense_id", expenses.GetByID)
+	router.POST("/expenses", expenses.Create)
+	router.PUT("/expenses/:expense_id", expenses.Update)
+	router.DELETE("/expenses/:expense_id", expenses.Delete)
 }
 
 func paymentsTypeUrls(router *gin.Engine) {
