@@ -138,7 +138,7 @@ func Delete(expenseID int) error {
 
 func buildQueryUpdate(expenseID int, newPocket *expenses.Expense) (string, []interface{}) {
 	query := "UPDATE expenses SET "
-	params := []interface{}{}
+	var params []interface{}
 
 	if newPocket.Name != "" {
 		query += "name = ?, "

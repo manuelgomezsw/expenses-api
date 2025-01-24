@@ -1,6 +1,7 @@
 package router
 
 import (
+	"expenses-api/internal/infraestructure/controller/cycles"
 	"expenses-api/internal/infraestructure/controller/expenses"
 	"expenses-api/internal/infraestructure/controller/paymentstype"
 	"expenses-api/internal/infraestructure/controller/pockets"
@@ -11,6 +12,7 @@ func mapURLs(router *gin.Engine) {
 	expensesUrls(router)
 	paymentsTypeUrls(router)
 	pocketsUrls(router)
+	cyclesUrls(router)
 }
 
 func expensesUrls(router *gin.Engine) {
@@ -36,4 +38,12 @@ func pocketsUrls(router *gin.Engine) {
 	router.POST("/pockets", pockets.Create)
 	router.PUT("/pockets/:pocket_id", pockets.Update)
 	router.DELETE("/pockets/:pocket_id", pockets.Delete)
+}
+
+func cyclesUrls(router *gin.Engine) {
+	router.GET("/cycles", cycles.Get)
+	router.GET("/cycles/:cycle_id", cycles.GetByID)
+	router.POST("/cycles", cycles.Create)
+	router.PUT("/cycles/:cycle_id", cycles.Update)
+	router.DELETE("/cycles/:cycle_id", cycles.Delete)
 }
