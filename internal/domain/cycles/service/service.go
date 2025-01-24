@@ -3,6 +3,7 @@ package service
 import (
 	"expenses-api/internal/domain/cycles"
 	"expenses-api/internal/domain/cycles/repository"
+	"expenses-api/internal/util/customdate"
 	"fmt"
 	"time"
 )
@@ -11,8 +12,12 @@ var (
 	MonthNamesShort = [...]string{"Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"}
 )
 
-func Get() ([]cycles.Cycle, error) {
-	return repository.Get()
+func GetAll() ([]cycles.Cycle, error) {
+	return repository.GetAll()
+}
+
+func GetActive() ([]cycles.Cycle, error) {
+	return repository.GetActive()
 }
 
 func GetByID(cycleID int) (cycles.Cycle, error) {
@@ -50,14 +55,12 @@ func Delete(cycleID int) error {
 }
 
 func checkDates(dateInit, dateEnd string) error {
-	formatDate := "2006-01-02"
-
-	parsedDateInit, err := time.Parse(formatDate, dateInit)
+	parsedDateInit, err := time.Parse(customdate.StandardDateTimeFormat, dateInit)
 	if err != nil {
 		return err
 	}
 
-	parsedDateEnd, err := time.Parse(formatDate, dateEnd)
+	parsedDateEnd, err := time.Parse(customdate.StandardDateTimeFormat, dateEnd)
 	if err != nil {
 		return err
 	}
@@ -70,14 +73,12 @@ func checkDates(dateInit, dateEnd string) error {
 }
 
 func getCycleName(dateInit, dateEnd string) string {
-	formatDate := "2006-01-02"
-
-	parsedDateInit, err := time.Parse(formatDate, dateInit)
+	parsedDateInit, err := time.Parse(customdate.StandardDateTimeFormat, dateInit)
 	if err != nil {
 		return ""
 	}
 
-	parsedDateEnd, err := time.Parse(formatDate, dateEnd)
+	parsedDateEnd, err := time.Parse(customdate.StandardDateTimeFormat, dateEnd)
 	if err != nil {
 		return ""
 	}

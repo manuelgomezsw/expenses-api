@@ -5,6 +5,15 @@ import (
 	"expenses-api/internal/domain/expenses/repository"
 )
 
+func GetByActiveCycles() ([]expenses.Expense, error) {
+	allExpenses, err := repository.GetByActiveCycles()
+	if err != nil {
+		return nil, err
+	}
+
+	return allExpenses, nil
+}
+
 func GetByPocketID(pocketID int) ([]expenses.Expense, error) {
 	allExpenses, err := repository.GetByPocketID(pocketID)
 	if err != nil {

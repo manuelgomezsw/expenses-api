@@ -9,7 +9,25 @@ import (
 )
 
 func Get(c *gin.Context) {
-	allPockets, err := service.Get()
+	allPockets, err := service.GetAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error getting all pockets",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	if allPockets == nil {
+		c.JSON(http.StatusNotFound, nil)
+		return
+	}
+
+	c.JSON(http.StatusOK, allPockets)
+}
+
+func GetActives(c *gin.Context) {
+	allPockets, err := service.GetActives()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error getting all pockets",

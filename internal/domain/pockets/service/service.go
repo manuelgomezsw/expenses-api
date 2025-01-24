@@ -5,8 +5,17 @@ import (
 	"expenses-api/internal/domain/pockets/repository"
 )
 
-func Get() ([]pockets.Pocket, error) {
-	pocket, err := repository.Get()
+func GetAll() ([]pockets.Pocket, error) {
+	pocket, err := repository.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return pocket, nil
+}
+
+func GetActives() ([]pockets.Pocket, error) {
+	pocket, err := repository.GetActives()
 	if err != nil {
 		return nil, err
 	}

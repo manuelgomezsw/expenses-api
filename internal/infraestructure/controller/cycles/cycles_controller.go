@@ -8,11 +8,29 @@ import (
 	"strconv"
 )
 
-func Get(c *gin.Context) {
-	allCycles, err := service.Get()
+func GetAll(c *gin.Context) {
+	allCycles, err := service.GetAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error getting all cycles",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	if allCycles == nil {
+		c.JSON(http.StatusNotFound, nil)
+		return
+	}
+
+	c.JSON(http.StatusOK, allCycles)
+}
+
+func GetActive(c *gin.Context) {
+	allCycles, err := service.GetActive()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error getting all active cycles",
 			"error":   err.Error(),
 		})
 		return

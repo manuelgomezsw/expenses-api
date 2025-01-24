@@ -8,6 +8,24 @@ import (
 	"strconv"
 )
 
+func GetByActiveCycles(c *gin.Context) {
+	allExpenses, err := service.GetByActiveCycles()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "error getting expenses by active cycle",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	if allExpenses == nil {
+		c.JSON(http.StatusNotFound, nil)
+		return
+	}
+
+	c.JSON(http.StatusOK, allExpenses)
+}
+
 func GetByPocketID(c *gin.Context) {
 	pocketID, err := strconv.ParseInt(c.Param("pocket_id"), 10, 32)
 	if err != nil {

@@ -16,6 +16,7 @@ func mapURLs(router *gin.Engine) {
 }
 
 func expensesUrls(router *gin.Engine) {
+	router.GET("/expenses", expenses.GetByActiveCycles)
 	router.GET("/expenses/pocket/:pocket_id", expenses.GetByPocketID)
 	router.GET("/expenses/payment/type/:payment_type_id", expenses.GetByPaymentTypeID)
 	router.GET("/expenses/:expense_id", expenses.GetByID)
@@ -33,7 +34,8 @@ func paymentsTypeUrls(router *gin.Engine) {
 }
 
 func pocketsUrls(router *gin.Engine) {
-	router.GET("/pockets", pockets.Get)
+	router.GET("/pockets/all", pockets.Get)
+	router.GET("/pockets/active", pockets.GetActives)
 	router.GET("/pockets/:pocket_id", pockets.GetByID)
 	router.POST("/pockets", pockets.Create)
 	router.PUT("/pockets/:pocket_id", pockets.Update)
@@ -41,7 +43,8 @@ func pocketsUrls(router *gin.Engine) {
 }
 
 func cyclesUrls(router *gin.Engine) {
-	router.GET("/cycles", cycles.Get)
+	router.GET("/cycles", cycles.GetAll)
+	router.GET("/cycles/active", cycles.GetActive)
 	router.GET("/cycles/:cycle_id", cycles.GetByID)
 	router.POST("/cycles", cycles.Create)
 	router.PUT("/cycles/:cycle_id", cycles.Update)

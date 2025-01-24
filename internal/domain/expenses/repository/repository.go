@@ -3,8 +3,55 @@ package repository
 import (
 	"expenses-api/internal/domain/expenses"
 	"expenses-api/internal/infraestructure/client/mysql"
+	"fmt"
+	"os"
 	"strings"
 )
+
+const (
+	basePathSqlQueries = "sql/expenses"
+
+	fileSqlQueryGetByActiveCycles = "GetByActiveCycles.sql"
+	fileSqlCreate                 = "Create.sql"
+	fileSqlDelete                 = "Delete.sql"
+)
+
+func GetByActiveCycles() ([]expenses.Expense, error) {
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryGetByActiveCycles))
+	if err != nil {
+		return nil, err
+	}
+
+	resultReview, err := mysql.ClientDB.Query(string(query))
+	if err != nil {
+		return nil, err
+	}
+
+	var allExpenses []expenses.Expense
+	for resultReview.Next() {
+		var expense expenses.Expense
+
+		err = resultReview.Scan(
+			&expense.ExpenseID,
+			&expense.Name,
+			&expense.Value,
+			&expense.CycleID,
+			&expense.CycleName,
+			&expense.PocketID,
+			&expense.PocketName,
+			&expense.PaymentTypeID,
+			&expense.PaymentTypeName,
+			&expense.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		allExpenses = append(allExpenses, expense)
+	}
+
+	return allExpenses, nil
+}
 
 func GetByID(expenseID int) (expenses.Expense, error) {
 	resultReview, err := mysql.ClientDB.Query(
@@ -91,12 +138,16 @@ func GetByPaymentTypeID(paymentTypeID int16) ([]expenses.Expense, error) {
 }
 
 func Create(expense *expenses.Expense) error {
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlCreate))
+	if err != nil {
+		return err
+	}
+
 	newRecord, err := mysql.ClientDB.Exec(
-		"INSERT INTO expenses (id, name, value, pocket_id, payment_type_id) VALUES (?, ?, ?, ?, ?)",
-		expense.ExpenseID,
+		string(query),
 		expense.Name,
 		expense.Value,
-		expense.PocketID,
+		expense.CycleID,
 		expense.PaymentTypeID,
 	)
 	if err != nil {
@@ -125,10 +176,11 @@ func Update(expenseID int, currentExpense *expenses.Expense) error {
 }
 
 func Delete(expenseID int) error {
-	_, err := mysql.ClientDB.Exec(
-		"DELETE FROM expenses WHERE id = ?",
-		expenseID,
-	)
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlDelete))
+	if err != nil {
+		return err
+	}
+	_, err = mysql.ClientDB.Exec(string(query), expenseID)
 	if err != nil {
 		return err
 	}
@@ -148,8 +200,8 @@ func buildQueryUpdate(expenseID int, newPocket *expenses.Expense) (string, []int
 		query += "value = ?, "
 		params = append(params, newPocket.Value)
 	}
-	if newPocket.PocketID != 0 {
-		query += "pocket_id = ?, "
+	if newPocket.CycleID != 0 {
+		query += "cycle_id = ?, "
 		params = append(params, newPocket.PocketID)
 	}
 	if newPocket.PaymentTypeID != 0 {

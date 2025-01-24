@@ -5,9 +5,36 @@ import (
 	"expenses-api/internal/infraestructure/client/mysql"
 )
 
-func Get() ([]pockets.Pocket, error) {
+func GetAll() ([]pockets.Pocket, error) {
 	resultReview, err := mysql.ClientDB.Query(
-		"SELECT id, name, status, created_at  FROM pockets")
+		"SELECT id, name, status, created_at FROM pockets ORDER BY name")
+	if err != nil {
+		return nil, err
+	}
+
+	var allPockets []pockets.Pocket
+	for resultReview.Next() {
+		var objPocket pockets.Pocket
+
+		err = resultReview.Scan(
+			&objPocket.PocketID,
+			&objPocket.Name,
+			&objPocket.Status,
+			&objPocket.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		allPockets = append(allPockets, objPocket)
+	}
+
+	return allPockets, nil
+}
+
+func GetActives() ([]pockets.Pocket, error) {
+	resultReview, err := mysql.ClientDB.Query(
+		"SELECT id, name, status, created_at FROM pockets WHERE status = true ORDER BY name")
 	if err != nil {
 		return nil, err
 	}
