@@ -7,7 +7,6 @@ import (
 	"expenses-api/internal/util/customdate"
 	"fmt"
 	"os"
-	"strings"
 )
 
 const (
@@ -15,6 +14,10 @@ const (
 
 	fileSqlQueryGetAll    = "GetAll.sql"
 	fileSqlQueryGetActive = "GetActive.sql"
+	fileSqlQueryGetByID   = "GetByID.sql"
+	fileSqlQueryCreate    = "Create.sql"
+	fileSqlQueryUpdate    = "Update.sql"
+	fileSqlQueryDelete    = "Delete.sql"
 )
 
 func GetAll() ([]cycles.Cycle, error) {
@@ -94,22 +97,12 @@ func GetActive() ([]cycles.Cycle, error) {
 }
 
 func GetByID(cycleID int) (cycles.Cycle, error) {
-	resultReview, err := mysql.ClientDB.Query(
-		"SELECT "+
-			"c.id,"+
-			"c.pocket_id,"+
-			"p.name,"+
-			"c.name,"+
-			"c.budget,"+
-			"c.date_init,"+
-			"c.date_end,"+
-			"c.status,"+
-			"c.created_at "+
-			"FROM cycles c "+
-			"JOIN pockets p ON c.pocket_id = p.id "+
-			"WHERE c.id = ?",
-		cycleID,
-	)
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryGetByID))
+	if err != nil {
+		return cycles.Cycle{}, err
+	}
+
+	resultReview, err := mysql.ClientDB.Query(string(query), cycleID)
 	if err != nil {
 		return cycles.Cycle{}, err
 	}
@@ -152,8 +145,13 @@ func Create(cycle *cycles.Cycle) error {
 		return errors.New("fecha final inválida: " + err.Error())
 	}
 
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryCreate))
+	if err != nil {
+		return err
+	}
+
 	newRecord, err := mysql.ClientDB.Exec(
-		"INSERT INTO cycles (pocket_id, name, budget, date_init, date_end) VALUES (?, ?, ?, ?, ?)",
+		string(query),
 		cycle.PocketID,
 		cycle.Name,
 		cycle.Budget,
@@ -174,8 +172,20 @@ func Create(cycle *cycles.Cycle) error {
 }
 
 func Update(cycleID int, currentCycle *cycles.Cycle) error {
-	query, params := buildQueryUpdate(cycleID, currentCycle)
-	_, err := mysql.ClientDB.Exec(query, params...)
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryUpdate))
+	if err != nil {
+		return err
+	}
+
+	_, err = mysql.ClientDB.Exec(
+		string(query),
+		currentCycle.PocketID,
+		currentCycle.Budget,
+		currentCycle.DateInit,
+		currentCycle.DateEnd,
+		currentCycle.Status,
+		cycleID,
+	)
 	if err != nil {
 		return err
 	}
@@ -186,42 +196,15 @@ func Update(cycleID int, currentCycle *cycles.Cycle) error {
 }
 
 func Delete(cycleID int) error {
-	_, err := mysql.ClientDB.Exec("DELETE FROM cycles WHERE id = ?", cycleID)
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryDelete))
+	if err != nil {
+		return err
+	}
+
+	_, err = mysql.ClientDB.Exec(string(query), cycleID)
 	if err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func buildQueryUpdate(cycleID int, currentCycle *cycles.Cycle) (string, []interface{}) {
-	query := "UPDATE cycles SET "
-	var params []interface{}
-
-	if currentCycle.PocketID > 0 {
-		query += "pocket_id = ?, "
-		params = append(params, currentCycle.PocketID)
-	}
-	if currentCycle.Budget > 0 {
-		query += "budget = ?, "
-		params = append(params, currentCycle.Budget)
-	}
-	if currentCycle.DateInit != "" {
-		query += "date_init = ?, "
-		params = append(params, currentCycle.DateInit)
-	}
-	if currentCycle.DateEnd != "" {
-		query += "date_end = ?, "
-		params = append(params, currentCycle.DateEnd)
-	}
-
-	query += "status = ?, "
-	params = append(params, currentCycle.Status)
-
-	query = strings.TrimSuffix(query, ", ")
-
-	query += " WHERE id = ?"
-	params = append(params, cycleID)
-
-	return query, params
 }

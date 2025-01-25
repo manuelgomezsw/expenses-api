@@ -3,11 +3,27 @@ package repository
 import (
 	"expenses-api/internal/domain/paymentstype"
 	"expenses-api/internal/infraestructure/client/mysql"
+	"fmt"
+	"os"
+)
+
+const (
+	basePathSqlQueries = "sql/paymentstype"
+
+	fileSqlQueryGet     = "GetAll.sql"
+	fileSqlQueryGetByID = "GetByID.sql"
+	fileSqlQueryCreate  = "Create.sql"
+	fileSqlQueryUpdate  = "Update.sql"
+	fileSqlQueryDelete  = "Delete.sql"
 )
 
 func Get() ([]paymentstype.PaymentType, error) {
-	resultReview, err := mysql.ClientDB.Query(
-		"SELECT id, name FROM payment_types ORDER BY id")
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryGet))
+	if err != nil {
+		return nil, err
+	}
+
+	resultReview, err := mysql.ClientDB.Query(string(query))
 	if err != nil {
 		return nil, err
 	}
@@ -28,8 +44,12 @@ func Get() ([]paymentstype.PaymentType, error) {
 }
 
 func GetByID(paymentTypeID int16) (paymentstype.PaymentType, error) {
-	resultReview, err := mysql.ClientDB.Query(
-		"SELECT id, name FROM payment_types WHERE id = ?", paymentTypeID)
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryGetByID))
+	if err != nil {
+		return paymentstype.PaymentType{}, err
+	}
+
+	resultReview, err := mysql.ClientDB.Query(string(query), paymentTypeID)
 	if err != nil {
 		return paymentstype.PaymentType{}, err
 	}
@@ -46,8 +66,13 @@ func GetByID(paymentTypeID int16) (paymentstype.PaymentType, error) {
 }
 
 func Create(newPaymentType *paymentstype.PaymentType) error {
-	_, err := mysql.ClientDB.Exec(
-		"INSERT INTO payment_types (id, name) VALUES (?, ?)",
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryCreate))
+	if err != nil {
+		return err
+	}
+
+	_, err = mysql.ClientDB.Exec(
+		string(query),
 		newPaymentType.PaymentTypeID,
 		newPaymentType.Name,
 	)
@@ -59,8 +84,13 @@ func Create(newPaymentType *paymentstype.PaymentType) error {
 }
 
 func Update(paymentTypeID int16, newPaymentType *paymentstype.PaymentType) error {
-	_, err := mysql.ClientDB.Exec(
-		"UPDATE payment_types SET name = ? WHERE id = ?",
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryUpdate))
+	if err != nil {
+		return err
+	}
+
+	_, err = mysql.ClientDB.Exec(
+		string(query),
 		newPaymentType.Name,
 		paymentTypeID,
 	)
@@ -74,10 +104,12 @@ func Update(paymentTypeID int16, newPaymentType *paymentstype.PaymentType) error
 }
 
 func Delete(paymentTypeID int16) error {
-	_, err := mysql.ClientDB.Exec(
-		"DELETE FROM payment_types WHERE id = ?",
-		paymentTypeID,
-	)
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryDelete))
+	if err != nil {
+		return err
+	}
+
+	_, err = mysql.ClientDB.Exec(string(query), paymentTypeID)
 	if err != nil {
 		return err
 	}

@@ -17,9 +17,6 @@ func mapURLs(router *gin.Engine) {
 
 func expensesUrls(router *gin.Engine) {
 	router.GET("/expenses", expenses.GetByActiveCycles)
-	router.GET("/expenses/pocket/:pocket_id", expenses.GetByPocketID)
-	router.GET("/expenses/payment/type/:payment_type_id", expenses.GetByPaymentTypeID)
-	router.GET("/expenses/:expense_id", expenses.GetByID)
 	router.POST("/expenses", expenses.Create)
 	router.PUT("/expenses/:expense_id", expenses.Update)
 	router.DELETE("/expenses/:expense_id", expenses.Delete)
