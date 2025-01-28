@@ -12,6 +12,15 @@
 2. GCP Secret Manager `go get cloud.google.com/go/secretmanager/apiv1`.
 3. GCP Firestore `go get cloud.google.com/go/firestore`.
 
+## Desplegar API
+Para desplegar, seguir los siguientes pasos:
+1. Refrescar token de auth con GCP: `gcloud auth login`.
+2. Se debe garantizar que el proyecto `quotes-api-100` esté por defecto seleccionado, para verificar `gcloud config configurations list`. Ahora, de no estarlo predefinido, ejecutar el siguiente comando `gcloud config set project quotes-api-100`.
+3. Garantizar que en el file `app.yaml` la llave `service` tenga el valor `expenses-api`.
+4. Garantizar que en el file `app.yaml` la llave `PROJECT_ID` tenga el valor `quotes-api-100`.
+5. Garantizar que en el file `app.yaml` la llave `APP_ENV` tenga el valor `production`.
+6. Ejecutar `gcloud app deploy` y seguir los pasos que allí aparecen, según convenga.
+
 ## Referencias
 ### Google Cloud CLI
 Para instalar se puede seguir la documentación de referencia de [google](https://cloud.google.com/sdk/docs/install-sdk) o simplemente con brew `brew install --cask google-cloud-sdk`.

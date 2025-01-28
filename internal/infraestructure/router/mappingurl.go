@@ -1,6 +1,7 @@
 package router
 
 import (
+	"expenses-api/internal/infraestructure/controller/budget"
 	"expenses-api/internal/infraestructure/controller/cycles"
 	"expenses-api/internal/infraestructure/controller/expenses"
 	"expenses-api/internal/infraestructure/controller/paymentstype"
@@ -13,6 +14,7 @@ func mapURLs(router *gin.Engine) {
 	paymentsTypeUrls(router)
 	pocketsUrls(router)
 	cyclesUrls(router)
+	budgetsUrls(router)
 }
 
 func expensesUrls(router *gin.Engine) {
@@ -46,4 +48,8 @@ func cyclesUrls(router *gin.Engine) {
 	router.POST("/cycles", cycles.Create)
 	router.PUT("/cycles/:cycle_id", cycles.Update)
 	router.DELETE("/cycles/:cycle_id", cycles.Delete)
+}
+
+func budgetsUrls(router *gin.Engine) {
+	router.POST("/budgets/:cycle_id", budget.Calculate)
 }

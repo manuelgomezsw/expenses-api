@@ -1,0 +1,8 @@
+runtime: go122
+
+instance_class: F1
+service: expenses-api
+
+env_variables:
+  PROJECT_ID: quotes-api-100
+  APP_ENV: production

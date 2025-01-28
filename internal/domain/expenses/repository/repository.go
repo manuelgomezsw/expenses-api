@@ -11,6 +11,7 @@ const (
 	basePathSqlQueries = "sql/expenses"
 
 	fileSqlQueryGetByActiveCycles = "GetByActiveCycles.sql"
+	fileSqlQueryGetByCycleID      = "GetByCycleID.sql"
 	fileSqlCreate                 = "Create.sql"
 	fileSqlUpdate                 = "Update.sql"
 	fileSqlDelete                 = "Delete.sql"
@@ -23,6 +24,43 @@ func GetByActiveCycles() ([]expenses.Expense, error) {
 	}
 
 	resultReview, err := mysql.ClientDB.Query(string(query))
+	if err != nil {
+		return nil, err
+	}
+
+	var allExpenses []expenses.Expense
+	for resultReview.Next() {
+		var expense expenses.Expense
+
+		err = resultReview.Scan(
+			&expense.ExpenseID,
+			&expense.Name,
+			&expense.Value,
+			&expense.CycleID,
+			&expense.CycleName,
+			&expense.PocketID,
+			&expense.PocketName,
+			&expense.PaymentTypeID,
+			&expense.PaymentTypeName,
+			&expense.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		allExpenses = append(allExpenses, expense)
+	}
+
+	return allExpenses, nil
+}
+
+func GetByCycleID(cycleID int) ([]expenses.Expense, error) {
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryGetByCycleID))
+	if err != nil {
+		return nil, err
+	}
+
+	resultReview, err := mysql.ClientDB.Query(string(query), cycleID)
 	if err != nil {
 		return nil, err
 	}
