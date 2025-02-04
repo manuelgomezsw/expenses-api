@@ -14,6 +14,15 @@ func GetByActiveCycles() ([]expenses.Expense, error) {
 	return allExpenses, nil
 }
 
+func GetByCycleID(cycleID int) ([]expenses.Expense, error) {
+	currentExpenses, err := repository.GetByCycleID(cycleID)
+	if err != nil {
+		return nil, err
+	}
+
+	return currentExpenses, nil
+}
+
 func Create(expense *expenses.Expense) error {
 	if err := repository.Create(expense); err != nil {
 		return err

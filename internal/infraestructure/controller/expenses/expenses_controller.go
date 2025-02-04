@@ -26,6 +26,33 @@ func GetByActiveCycles(c *gin.Context) {
 	c.JSON(http.StatusOK, allExpenses)
 }
 
+func GetByCycleID(c *gin.Context) {
+	cycleID, err := strconv.ParseInt(c.Param("cycle_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Error serializing cycle_id",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	expensesByCycle, err := service.GetByCycleID(int(cycleID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error getting expenses by cycle",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	if expensesByCycle == nil {
+		c.JSON(http.StatusNotFound, nil)
+		return
+	}
+
+	c.JSON(http.StatusOK, expensesByCycle)
+}
+
 func Create(c *gin.Context) {
 	var expense expenses.Expense
 	if err := c.ShouldBindJSON(&expense); err != nil {

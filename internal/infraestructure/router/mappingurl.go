@@ -2,6 +2,7 @@ package router
 
 import (
 	"expenses-api/internal/infraestructure/controller/budget"
+	"expenses-api/internal/infraestructure/controller/concepts"
 	"expenses-api/internal/infraestructure/controller/cycles"
 	"expenses-api/internal/infraestructure/controller/expenses"
 	"expenses-api/internal/infraestructure/controller/paymentstype"
@@ -15,6 +16,7 @@ func mapURLs(router *gin.Engine) {
 	pocketsUrls(router)
 	cyclesUrls(router)
 	budgetsUrls(router)
+	conceptsUrls(router)
 }
 
 func expensesUrls(router *gin.Engine) {
@@ -45,6 +47,7 @@ func cyclesUrls(router *gin.Engine) {
 	router.GET("/cycles", cycles.GetAll)
 	router.GET("/cycles/active", cycles.GetActive)
 	router.GET("/cycles/:cycle_id", cycles.GetByID)
+	router.GET("/cycles/:cycle_id/expenses", expenses.GetByCycleID)
 	router.POST("/cycles", cycles.Create)
 	router.PUT("/cycles/:cycle_id", cycles.Update)
 	router.DELETE("/cycles/:cycle_id", cycles.Delete)
@@ -52,4 +55,11 @@ func cyclesUrls(router *gin.Engine) {
 
 func budgetsUrls(router *gin.Engine) {
 	router.POST("/budgets/:cycle_id", budget.Calculate)
+}
+
+func conceptsUrls(router *gin.Engine) {
+	router.GET("/concepts/:pocket_id", concepts.GetByPocketID)
+	router.POST("/concepts", concepts.Create)
+	router.PUT("/concepts/:concept_id", concepts.Update)
+	router.DELETE("/concepts/:concept_id", concepts.Delete)
 }

@@ -17,3 +17,4 @@ FROM expenses e
          JOIN payment_types pt
               ON pt.id = e.payment_type_id
 WHERE c.id = ?
+ORDER BY e.created_at DESC
