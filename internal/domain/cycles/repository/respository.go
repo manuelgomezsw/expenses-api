@@ -12,12 +12,14 @@ import (
 const (
 	basePathSqlQueries = "sql/cycles"
 
-	fileSqlQueryGetAll    = "GetAll.sql"
-	fileSqlQueryGetActive = "GetActive.sql"
-	fileSqlQueryGetByID   = "GetByID.sql"
-	fileSqlQueryCreate    = "Create.sql"
-	fileSqlQueryUpdate    = "Update.sql"
-	fileSqlQueryDelete    = "Delete.sql"
+	fileSqlQueryGetAll        = "GetAll.sql"
+	fileSqlQueryGetActive     = "GetActive.sql"
+	fileSqlQueryGetByID       = "GetByID.sql"
+	fileSqlQueryCreate        = "Create.sql"
+	fileSqlQueryCreateHistory = "CreateHistory.sql"
+	fileSqlQueryUpdate        = "Update.sql"
+	fileSqlQueryClose         = "Close.sql"
+	fileSqlQueryDelete        = "Delete.sql"
 )
 
 func GetAll() ([]cycles.Cycle, error) {
@@ -171,6 +173,29 @@ func Create(cycle *cycles.Cycle) error {
 	return nil
 }
 
+func CreateHistory(cycleHistory cycles.History) error {
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryCreateHistory))
+	if err != nil {
+		return err
+	}
+
+	_, err = mysql.ClientDB.Exec(
+		string(query),
+		cycleHistory.PocketName,
+		cycleHistory.CycleName,
+		cycleHistory.Budget,
+		cycleHistory.Spent,
+		cycleHistory.SpentRatio,
+		cycleHistory.DateInit,
+		cycleHistory.DateEnd,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func Update(cycleID int, currentCycle *cycles.Cycle) error {
 	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryUpdate))
 	if err != nil {
@@ -191,6 +216,23 @@ func Update(cycleID int, currentCycle *cycles.Cycle) error {
 	}
 
 	currentCycle.CycleID = cycleID
+
+	return nil
+}
+
+func Close(cycleID int) error {
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryClose))
+	if err != nil {
+		return err
+	}
+
+	_, err = mysql.ClientDB.Exec(
+		string(query),
+		cycleID,
+	)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -5,6 +5,10 @@ import (
 	"expenses-api/internal/domain/concepts/repository"
 )
 
+func GetByID(conceptID int) ([]concepts.Concept, error) {
+	return repository.GetByID(conceptID)
+}
+
 func GetByPocketID(pocketID int) ([]concepts.Concept, error) {
 	return repository.GetByPocketID(pocketID)
 }

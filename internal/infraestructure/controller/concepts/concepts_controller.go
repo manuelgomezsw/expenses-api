@@ -8,6 +8,33 @@ import (
 	"strconv"
 )
 
+func GetByID(c *gin.Context) {
+	conceptID, err := strconv.ParseInt(c.Param("concept_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Error serializing concept_id",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	conceptsByPocket, err := service.GetByID(int(conceptID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error getting concepts by id",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	if len(conceptsByPocket) == 0 {
+		c.JSON(http.StatusNotFound, nil)
+		return
+	}
+
+	c.JSON(http.StatusOK, conceptsByPocket)
+}
+
 func GetByPocketID(c *gin.Context) {
 	pocketID, err := strconv.ParseInt(c.Param("pocket_id"), 10, 32)
 	if err != nil {

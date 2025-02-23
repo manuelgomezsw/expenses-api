@@ -7,4 +7,4 @@ SELECT c.id,
        c.updated_at
 FROM concepts c
          JOIN pockets p ON c.pocket_id = p.id
-WHERE pocket_id = ?
+WHERE c.id = ?

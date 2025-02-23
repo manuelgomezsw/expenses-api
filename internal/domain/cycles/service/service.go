@@ -1,8 +1,10 @@
 package service
 
 import (
+	"expenses-api/internal/domain/budgets/service"
 	"expenses-api/internal/domain/cycles"
 	"expenses-api/internal/domain/cycles/repository"
+	expensesRepository "expenses-api/internal/domain/expenses/repository"
 	"expenses-api/internal/util/customdate"
 	"fmt"
 	"time"
@@ -52,6 +54,37 @@ func Update(cycleID int, currentCycle *cycles.Cycle) error {
 
 func Delete(cycleID int) error {
 	return repository.Delete(cycleID)
+}
+
+func Finish(cycleID int) error {
+	cycle, err := repository.GetByID(cycleID)
+	if err != nil {
+		return err
+	}
+
+	cycleExpenses, err := expensesRepository.GetByCycleID(cycleID)
+	if err != nil {
+		return err
+	}
+
+	var cycleHistory cycles.History
+	cycleHistory.PocketName = cycle.PocketName
+	cycleHistory.CycleName = cycle.Name
+	cycleHistory.Budget = cycle.Budget
+	cycleHistory.Spent = service.SumExpenses(cycleExpenses)
+	cycleHistory.SpentRatio = service.GetSpentRatio(float64(cycleHistory.Budget), float64(cycleHistory.Spent))
+	cycleHistory.DateInit = cycle.DateInit
+	cycleHistory.DateEnd = cycle.DateEnd
+
+	if err = repository.CreateHistory(cycleHistory); err != nil {
+		return err
+	}
+
+	if err = repository.Close(cycleID); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func checkDates(dateInit, dateEnd string) error {

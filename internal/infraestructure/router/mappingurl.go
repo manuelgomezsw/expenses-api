@@ -51,6 +51,7 @@ func cyclesUrls(router *gin.Engine) {
 	router.POST("/cycles", cycles.Create)
 	router.PUT("/cycles/:cycle_id", cycles.Update)
 	router.DELETE("/cycles/:cycle_id", cycles.Delete)
+	router.POST("/cycles/:cycle_id/finish", cycles.Finish)
 }
 
 func budgetsUrls(router *gin.Engine) {
@@ -58,7 +59,8 @@ func budgetsUrls(router *gin.Engine) {
 }
 
 func conceptsUrls(router *gin.Engine) {
-	router.GET("/concepts/:pocket_id", concepts.GetByPocketID)
+	router.GET("/pockets/:pocket_id/concepts", concepts.GetByPocketID)
+	router.GET("/concepts/:concept_id", concepts.GetByID)
 	router.POST("/concepts", concepts.Create)
 	router.PUT("/concepts/:concept_id", concepts.Update)
 	router.DELETE("/concepts/:concept_id", concepts.Delete)

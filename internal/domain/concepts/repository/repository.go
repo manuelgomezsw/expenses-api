@@ -11,11 +11,47 @@ import (
 const (
 	basePathSqlQueries = "sql/concepts"
 
+	fileSqlQueryGetByID       = "GetByID.sql"
 	fileSqlQueryGetByPocketID = "GetByPocketID.sql"
 	fileSqlQueryCreate        = "Create.sql"
 	fileSqlQueryUpdate        = "Update.sql"
 	fileSqlQueryDelete        = "Delete.sql"
 )
+
+func GetByID(pocketID int) ([]concepts.Concept, error) {
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryGetByID))
+	if err != nil {
+		return nil, err
+	}
+
+	conceptsByPocketResult, err := mysql.ClientDB.Query(string(query), pocketID)
+	if err != nil {
+		return nil, err
+	}
+
+	var conceptsByPocket []concepts.Concept
+
+	for conceptsByPocketResult.Next() {
+		var objConcept concepts.Concept
+
+		err = conceptsByPocketResult.Scan(
+			&objConcept.ID,
+			&objConcept.Name,
+			&objConcept.Value,
+			&objConcept.PocketID,
+			&objConcept.PocketName,
+			&objConcept.Payed,
+			&objConcept.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		conceptsByPocket = append(conceptsByPocket, objConcept)
+	}
+
+	return conceptsByPocket, nil
+}
 
 func GetByPocketID(pocketID int) ([]concepts.Concept, error) {
 	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryGetByPocketID))
@@ -38,6 +74,7 @@ func GetByPocketID(pocketID int) ([]concepts.Concept, error) {
 			&objConcept.Name,
 			&objConcept.Value,
 			&objConcept.PocketID,
+			&objConcept.PocketName,
 			&objConcept.Payed,
 			&objConcept.UpdatedAt,
 		)

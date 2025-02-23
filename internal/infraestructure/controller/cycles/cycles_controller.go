@@ -142,3 +142,27 @@ func Delete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, nil)
 }
+
+func Finish(c *gin.Context) {
+	cycleID, err := strconv.ParseInt(c.Param("cycle_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Error serializing cycle_id",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	err = service.Finish(int(cycleID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error finishing cycle",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Cycle finished",
+	})
+}

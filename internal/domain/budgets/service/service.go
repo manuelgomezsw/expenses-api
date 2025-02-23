@@ -22,13 +22,13 @@ func Calculate(cycleID int) (budgets.Budget, error) {
 		return budgets.Budget{}, err
 	}
 
-	budget.Spent = getCurrentSpent(currentExpenses)
-	budget.SpentRatio = getSpentRatio(float64(currentCycle.Budget), float64(budget.Spent))
+	budget.Spent = SumExpenses(currentExpenses)
+	budget.SpentRatio = GetSpentRatio(float64(currentCycle.Budget), float64(budget.Spent))
 
 	return budget, nil
 }
 
-func getCurrentSpent(currentExpenses []expenses.Expense) int64 {
+func SumExpenses(currentExpenses []expenses.Expense) int64 {
 	spent := int64(0)
 	for _, expense := range currentExpenses {
 		spent += expense.Value
@@ -37,6 +37,6 @@ func getCurrentSpent(currentExpenses []expenses.Expense) int64 {
 	return spent
 }
 
-func getSpentRatio(budget, spent float64) int {
+func GetSpentRatio(budget, spent float64) int {
 	return int((spent / budget) * 100)
 }
