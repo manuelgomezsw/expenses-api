@@ -11,11 +11,12 @@ import (
 const (
 	basePathSqlQueries = "sql/concepts"
 
-	fileSqlQueryGetByID       = "GetByID.sql"
-	fileSqlQueryGetByPocketID = "GetByPocketID.sql"
-	fileSqlQueryCreate        = "Create.sql"
-	fileSqlQueryUpdate        = "Update.sql"
-	fileSqlQueryDelete        = "Delete.sql"
+	fileSqlQueryGetByID         = "GetByID.sql"
+	fileSqlQueryGetByPocketID   = "GetByPocketID.sql"
+	fileSqlQueryCreate          = "Create.sql"
+	fileSqlQueryUpdate          = "Update.sql"
+	fileSqlQueryDelete          = "Delete.sql"
+	fileSqlQueryBulkUpdatePayed = "BulkUpdatePayed.sql"
 )
 
 func GetByID(pocketID int) ([]concepts.Concept, error) {
@@ -135,6 +136,25 @@ func Update(conceptID int, currentConcept *concepts.Concept) error {
 	}
 
 	currentConcept.ID = conceptID
+
+	return nil
+}
+
+func BulkUpdatePayed(pocketID int, payed bool) error {
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryBulkUpdatePayed))
+	if err != nil {
+		return err
+	}
+
+	_, err = mysql.ClientDB.Exec(
+		string(query),
+		payed,
+		time.Now().Format("2006-01-02"),
+		pocketID,
+	)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

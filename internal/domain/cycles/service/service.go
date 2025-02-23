@@ -2,6 +2,7 @@ package service
 
 import (
 	"expenses-api/internal/domain/budgets/service"
+	conceptsRepository "expenses-api/internal/domain/concepts/repository"
 	"expenses-api/internal/domain/cycles"
 	"expenses-api/internal/domain/cycles/repository"
 	expensesRepository "expenses-api/internal/domain/expenses/repository"
@@ -81,6 +82,10 @@ func Finish(cycleID int) error {
 	}
 
 	if err = repository.Close(cycleID); err != nil {
+		return err
+	}
+
+	if err = conceptsRepository.BulkUpdatePayed(cycle.PocketID, false); err != nil {
 		return err
 	}
 
