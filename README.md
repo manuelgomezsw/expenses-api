@@ -11,6 +11,7 @@
 2. GCP Cloud SQL Connector `go get cloud.google.com/go/cloudsqlconn`.
 2. GCP Secret Manager `go get cloud.google.com/go/secretmanager/apiv1`.
 3. GCP Firestore `go get cloud.google.com/go/firestore`.
+4. Copier: Copia los valores de una entidad a otra `go get -u github.com/jinzhu/copier`.
 
 ## Desplegar API
 Para desplegar, seguir los siguientes pasos:

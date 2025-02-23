@@ -7,6 +7,7 @@ import (
 	"expenses-api/internal/infraestructure/controller/expenses"
 	"expenses-api/internal/infraestructure/controller/paymentstype"
 	"expenses-api/internal/infraestructure/controller/pockets"
+	"expenses-api/internal/infraestructure/controller/users"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,6 +18,7 @@ func mapURLs(router *gin.Engine) {
 	cyclesUrls(router)
 	budgetsUrls(router)
 	conceptsUrls(router)
+	usersUrl(router)
 }
 
 func expensesUrls(router *gin.Engine) {
@@ -62,4 +64,10 @@ func conceptsUrls(router *gin.Engine) {
 	router.POST("/concepts", concepts.Create)
 	router.PUT("/concepts/:concept_id", concepts.Update)
 	router.DELETE("/concepts/:concept_id", concepts.Delete)
+}
+
+func usersUrl(router *gin.Engine) {
+	router.POST("/users", users.Create)
+	router.POST("/login", users.Login)
+	router.POST("/refresh", users.Refresh)
 }
