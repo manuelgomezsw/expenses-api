@@ -179,6 +179,18 @@ func CreateHistory(cycleHistory cycles.History) error {
 		return err
 	}
 
+	// Convertir dateInit a "YYYY-MM-DD HH:MM:SS"
+	dateInitFormatted, err := customdate.ParseAndFormatDateMySql(cycleHistory.DateInit)
+	if err != nil {
+		return errors.New("fecha inicial inválida: " + err.Error())
+	}
+
+	// Convertir dateEnd a "YYYY-MM-DD HH:MM:SS"
+	dateEndFormatted, err := customdate.ParseAndFormatDateMySql(cycleHistory.DateEnd)
+	if err != nil {
+		return errors.New("fecha final inválida: " + err.Error())
+	}
+
 	_, err = mysql.ClientDB.Exec(
 		string(query),
 		cycleHistory.PocketName,
@@ -186,8 +198,8 @@ func CreateHistory(cycleHistory cycles.History) error {
 		cycleHistory.Budget,
 		cycleHistory.Spent,
 		cycleHistory.SpentRatio,
-		cycleHistory.DateInit,
-		cycleHistory.DateEnd,
+		dateInitFormatted,
+		dateEndFormatted,
 	)
 	if err != nil {
 		return err
