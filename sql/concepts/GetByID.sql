@@ -4,7 +4,8 @@ SELECT c.id,
        c.pocket_id,
        p.name AS 'pocket_name',
        c.payed,
-       c.updated_at
+       c.updated_at,
+       c.payment_day
 FROM concepts c
          JOIN pockets p ON c.pocket_id = p.id
 WHERE c.id = ?

@@ -113,6 +113,36 @@ func Update(c *gin.Context) {
 	c.JSON(http.StatusOK, concept)
 }
 
+func PayedUpdate(c *gin.Context) {
+	conceptID, err := strconv.ParseInt(c.Param("concept_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Error serializing concept_id",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	var payed bool
+	if err := c.ShouldBindJSON(&payed); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "error serializing body",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	if err := service.PayedUpdate(int(conceptID), &payed); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "error updating concept",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, "")
+}
+
 func Delete(c *gin.Context) {
 	conceptID, err := strconv.ParseInt(c.Param("concept_id"), 10, 64)
 	if err != nil {

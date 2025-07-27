@@ -8,4 +8,5 @@ type Concept struct {
 	PocketName string `json:"pocket_name"`
 	Payed      bool   `json:"payed"`
 	UpdatedAt  string `json:"updated_at"`
+	PaymentDay int16  `json:"payment_day"`
 }

@@ -1,8 +1,8 @@
 package paymentstype
 
 import (
-	"expenses-api/internal/domain/paymentstype"
-	"expenses-api/internal/domain/paymentstype/service"
+	"expenses-api/internal/domain/payments"
+	"expenses-api/internal/domain/payments/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -54,7 +54,7 @@ func GetByID(c *gin.Context) {
 }
 
 func Create(c *gin.Context) {
-	var newPaymentType paymentstype.PaymentType
+	var newPaymentType payments.Type
 	if err := c.ShouldBindJSON(&newPaymentType); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Error serializing body",
@@ -75,7 +75,7 @@ func Create(c *gin.Context) {
 }
 
 func Update(c *gin.Context) {
-	var paymentType paymentstype.PaymentType
+	var paymentType payments.Type
 	if err := c.ShouldBindJSON(&paymentType); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Error serializing body",

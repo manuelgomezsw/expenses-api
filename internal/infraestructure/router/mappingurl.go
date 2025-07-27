@@ -63,5 +63,6 @@ func conceptsUrls(router *gin.Engine) {
 	router.GET("/concepts/:concept_id", concepts.GetByID)
 	router.POST("/concepts", concepts.Create)
 	router.PUT("/concepts/:concept_id", concepts.Update)
+	router.PUT("/concepts/payed/:concept_id", concepts.PayedUpdate)
 	router.DELETE("/concepts/:concept_id", concepts.Delete)
 }

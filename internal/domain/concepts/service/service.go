@@ -21,6 +21,10 @@ func Update(conceptID int, currentConcept *concepts.Concept) error {
 	return repository.Update(conceptID, currentConcept)
 }
 
+func PayedUpdate(conceptID int, payed *bool) error {
+	return repository.PayedUpdate(conceptID, payed)
+}
+
 func Delete(cycleID int) error {
 	return repository.Delete(cycleID)
 }

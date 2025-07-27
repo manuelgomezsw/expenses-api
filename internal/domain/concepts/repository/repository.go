@@ -15,6 +15,7 @@ const (
 	fileSqlQueryGetByPocketID   = "GetByPocketID.sql"
 	fileSqlQueryCreate          = "Create.sql"
 	fileSqlQueryUpdate          = "Update.sql"
+	fileSqlQueryPayedUpdate     = "PayedUpdate.sql"
 	fileSqlQueryDelete          = "Delete.sql"
 	fileSqlQueryBulkUpdatePayed = "BulkUpdatePayed.sql"
 )
@@ -78,6 +79,7 @@ func GetByPocketID(pocketID int) ([]concepts.Concept, error) {
 			&objConcept.PocketName,
 			&objConcept.Payed,
 			&objConcept.UpdatedAt,
+			&objConcept.PaymentDay,
 		)
 		if err != nil {
 			return nil, err
@@ -102,6 +104,7 @@ func Create(concept *concepts.Concept) error {
 		concept.PocketID,
 		concept.Payed,
 		time.Now(),
+		concept.PaymentDay,
 	)
 	if err != nil {
 		return err
@@ -129,6 +132,7 @@ func Update(conceptID int, currentConcept *concepts.Concept) error {
 		currentConcept.PocketID,
 		currentConcept.Payed,
 		time.Now(),
+		currentConcept.PaymentDay,
 		conceptID,
 	)
 	if err != nil {
@@ -136,6 +140,25 @@ func Update(conceptID int, currentConcept *concepts.Concept) error {
 	}
 
 	currentConcept.ID = conceptID
+
+	return nil
+}
+
+func PayedUpdate(conceptID int, payed *bool) error {
+	query, err := os.ReadFile(fmt.Sprintf("%s/%s", basePathSqlQueries, fileSqlQueryPayedUpdate))
+	if err != nil {
+		return err
+	}
+
+	_, err = mysql.ClientDB.Exec(
+		string(query),
+		payed,
+		time.Now(),
+		conceptID,
+	)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

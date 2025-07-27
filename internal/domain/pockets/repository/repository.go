@@ -37,6 +37,7 @@ func GetAll() ([]pockets.Pocket, error) {
 			&objPocket.PocketID,
 			&objPocket.Name,
 			&objPocket.Status,
+			&objPocket.TotalAmount,
 			&objPocket.CreatedAt,
 		)
 		if err != nil {
@@ -68,6 +69,7 @@ func GetActives() ([]pockets.Pocket, error) {
 			&objPocket.PocketID,
 			&objPocket.Name,
 			&objPocket.Status,
+			&objPocket.TotalAmount,
 			&objPocket.CreatedAt,
 		)
 		if err != nil {
@@ -97,6 +99,7 @@ func GetByID(pocketID int64) (pockets.Pocket, error) {
 			&pocket.PocketID,
 			&pocket.Name,
 			&pocket.Status,
+			&pocket.TotalAmount,
 			&pocket.CreatedAt,
 		)
 		if err != nil {
