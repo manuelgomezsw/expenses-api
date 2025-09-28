@@ -1,45 +1,45 @@
 package router
 
 import (
-	"expenses-api/internal/infraestructure/controller/frontend"
+	"expenses-api/internal/infrastructure/container"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 func mapURLs(router *gin.Engine) {
-	// Solo rutas para el frontend Angular
-	frontendUrls(router)
+	// Initialize dependency injection container
+	c, err := container.NewContainer()
+	if err != nil {
+		log.Fatalf("Failed to initialize container: %v", err)
+	}
+
+	frontendUrls(router, c)
 }
 
-// frontendUrls define las rutas específicas para el frontend Angular
-func frontendUrls(router *gin.Engine) {
-	// Inicializar controladores
-	summaryController := frontend.NewSummaryController()
-	configController := frontend.NewConfigController()
-	fixedExpensesController := frontend.NewFixedExpensesController()
-	dailyExpensesController := frontend.NewDailyExpensesController()
-
+// frontendUrls define las rutas específicas para el frontend Angular usando handlers
+func frontendUrls(router *gin.Engine, c *container.Container) {
 	// Grupo de rutas API
 	api := router.Group("/api")
 	{
 		// Resumen mensual
-		api.GET("/summary/:month", summaryController.GetMonthlySummary)
+		api.GET("/summary/:month", c.SummaryHandler.GetMonthlySummary)
 
 		// Configuración
-		api.GET("/config/income", configController.GetIncome)
-		api.PUT("/config/income", configController.UpdateIncome)
-		api.GET("/config/pockets", configController.GetPockets)
-		api.POST("/config/pockets", configController.CreatePocket)
-		api.PUT("/config/pockets/:id", configController.UpdatePocket)
-		api.DELETE("/config/pockets/:id", configController.DeletePocket)
+		api.GET("/config/income", c.ConfigHandler.GetIncome)
+		api.PUT("/config/income", c.ConfigHandler.UpdateIncome)
+		api.GET("/config/pockets", c.ConfigHandler.GetPockets)
+		api.POST("/config/pockets", c.ConfigHandler.CreatePocket)
+		api.PUT("/config/pockets/:id", c.ConfigHandler.UpdatePocket)
+		api.DELETE("/config/pockets/:id", c.ConfigHandler.DeletePocket)
 
 		// Gastos fijos
-		api.GET("/fixed-expenses/:month", fixedExpensesController.GetByMonth)
-		api.PUT("/fixed-expenses/:id/status", fixedExpensesController.UpdateStatus)
+		api.GET("/fixed-expenses/:month", c.FixedExpenseHandler.GetByMonth)
+		api.PUT("/fixed-expenses/:id/status", c.FixedExpenseHandler.UpdateStatus)
 
 		// Gastos diarios
-		api.GET("/daily-expenses/:month", dailyExpensesController.GetByMonth)
-		api.POST("/daily-expenses", dailyExpensesController.Create)
-		api.PUT("/daily-expenses/:id", dailyExpensesController.Update)
-		api.DELETE("/daily-expenses/:id", dailyExpensesController.Delete)
+		api.GET("/daily-expenses/:month", c.DailyExpenseHandler.GetByMonth)
+		api.POST("/daily-expenses", c.DailyExpenseHandler.Create)
+		api.PUT("/daily-expenses/:id", c.DailyExpenseHandler.Update)
+		api.DELETE("/daily-expenses/:id", c.DailyExpenseHandler.Delete)
 	}
 }

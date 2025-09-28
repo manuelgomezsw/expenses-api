@@ -1,8 +1,6 @@
 package database
 
 import (
-	"expenses-api/internal/infraestructure/client/secretmanager"
-	"expenses-api/internal/util/constants"
 	"fmt"
 	"log"
 	"os"
@@ -73,34 +71,30 @@ func initializeGORM() (*gorm.DB, error) {
 	return db, nil
 }
 
-// buildDSN constructs the database connection string
+// buildDSN constructs the database connection string from environment variables
 func buildDSN() (string, error) {
-	// Get database credentials from Secret Manager
-	dbUser, err := secretmanager.GetValue(constants.DbUser)
-	if err != nil {
-		return "", fmt.Errorf("failed to get DB user: %w", err)
+	dbUser := getEnvOrDefault("DB_USER", "root")
+	dbPassword := getEnvOrDefault("DB_PASSWORD", "")
+	dbHost := getEnvOrDefault("DB_HOST", "localhost:3306")
+	dbName := getEnvOrDefault("DB_NAME", "expenses_db")
+
+	if dbPassword == "" {
+		return "", fmt.Errorf("DB_PASSWORD environment variable is required")
 	}
 
-	dbPwd, err := secretmanager.GetValue(constants.DbPassword)
-	if err != nil {
-		return "", fmt.Errorf("failed to get DB password: %w", err)
-	}
-
-	dbName, err := secretmanager.GetValue(constants.DbName)
-	if err != nil {
-		return "", fmt.Errorf("failed to get DB name: %w", err)
-	}
-
-	instanceConnectionName, err := secretmanager.GetValue(constants.InstanceConnectionName)
-	if err != nil {
-		return "", fmt.Errorf("failed to get instance connection name: %w", err)
-	}
-
-	// Build DSN for Cloud SQL
-	dsn := fmt.Sprintf("%s:%s@unix(/cloudsql/%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		dbUser, dbPwd, instanceConnectionName, dbName)
+	// Build DSN for local MySQL or Cloud SQL
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		dbUser, dbPassword, dbHost, dbName)
 
 	return dsn, nil
+}
+
+// getEnvOrDefault gets environment variable or returns default value
+func getEnvOrDefault(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
 }
 
 // getLoggerConfig returns the appropriate logger configuration based on environment

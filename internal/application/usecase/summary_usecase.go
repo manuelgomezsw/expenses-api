@@ -88,23 +88,16 @@ func (uc *SummaryUseCase) GetMonthlySummary(month string) (*dto.MonthlySummaryDT
 	// Calculate remaining budget
 	remainingBudget := totalIncome - totalFixedExpenses - totalDailyExpenses
 	
-	// Calculate daily budget used percentage
-	var dailyBudgetUsedPercentage float64 = 0
-	if dailyBudgetTotal > 0 {
-		dailyBudgetUsedPercentage = (totalDailyExpenses / dailyBudgetTotal) * 100
-	}
-	
 	summary := &dto.MonthlySummaryDTO{
-		Month:                    month,
-		TotalIncome:             totalIncome,
-		TotalFixedExpenses:      totalFixedExpenses,
-		TotalDailyExpenses:      totalDailyExpenses,
-		RemainingBudget:         remainingBudget,
-		FixedExpensesPaid:       fixedExpensesPaid,
-		FixedExpensesTotal:      fixedExpensesTotal,
-		DailyBudgetUsed:         totalDailyExpenses,
-		DailyBudgetTotal:        dailyBudgetTotal,
-		DailyBudgetUsedPercentage: dailyBudgetUsedPercentage,
+		Month:              month,
+		TotalIncome:        totalIncome,
+		TotalFixedExpenses: totalFixedExpenses,
+		TotalDailyExpenses: totalDailyExpenses,
+		RemainingBudget:    remainingBudget,
+		FixedExpensesPaid:  fixedExpensesPaid,
+		FixedExpensesTotal: fixedExpensesTotal,
+		DailyBudgetUsed:    totalDailyExpenses,
+		DailyBudgetTotal:   dailyBudgetTotal,
 	}
 	
 	return summary, nil
