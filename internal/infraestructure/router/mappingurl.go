@@ -1,68 +1,45 @@
 package router
 
 import (
-	"expenses-api/internal/infraestructure/controller/budget"
-	"expenses-api/internal/infraestructure/controller/concepts"
-	"expenses-api/internal/infraestructure/controller/cycles"
-	"expenses-api/internal/infraestructure/controller/expenses"
-	"expenses-api/internal/infraestructure/controller/paymentstype"
-	"expenses-api/internal/infraestructure/controller/pockets"
+	"expenses-api/internal/infraestructure/controller/frontend"
 	"github.com/gin-gonic/gin"
 )
 
 func mapURLs(router *gin.Engine) {
-	expensesUrls(router)
-	paymentsTypeUrls(router)
-	pocketsUrls(router)
-	cyclesUrls(router)
-	budgetsUrls(router)
-	conceptsUrls(router)
+	// Solo rutas para el frontend Angular
+	frontendUrls(router)
 }
 
-func expensesUrls(router *gin.Engine) {
-	router.GET("/expenses", expenses.GetByActiveCycles)
-	router.POST("/expenses", expenses.Create)
-	router.PUT("/expenses/:expense_id", expenses.Update)
-	router.DELETE("/expenses/:expense_id", expenses.Delete)
-}
+// frontendUrls define las rutas específicas para el frontend Angular
+func frontendUrls(router *gin.Engine) {
+	// Inicializar controladores
+	summaryController := frontend.NewSummaryController()
+	configController := frontend.NewConfigController()
+	fixedExpensesController := frontend.NewFixedExpensesController()
+	dailyExpensesController := frontend.NewDailyExpensesController()
 
-func paymentsTypeUrls(router *gin.Engine) {
-	router.GET("/payments/type", paymentstype.Get)
-	router.GET("/payments/type/:payment_type_id", paymentstype.GetByID)
-	router.POST("/payments/type", paymentstype.Create)
-	router.PUT("/payments/type/:payment_type_id", paymentstype.Update)
-	router.DELETE("/payments/type/:payment_type_id", paymentstype.Delete)
-}
+	// Grupo de rutas API
+	api := router.Group("/api")
+	{
+		// Resumen mensual
+		api.GET("/summary/:month", summaryController.GetMonthlySummary)
 
-func pocketsUrls(router *gin.Engine) {
-	router.GET("/pockets/all", pockets.Get)
-	router.GET("/pockets/active", pockets.GetActives)
-	router.GET("/pockets/:pocket_id", pockets.GetByID)
-	router.POST("/pockets", pockets.Create)
-	router.PUT("/pockets/:pocket_id", pockets.Update)
-	router.DELETE("/pockets/:pocket_id", pockets.Delete)
-}
+		// Configuración
+		api.GET("/config/income", configController.GetIncome)
+		api.PUT("/config/income", configController.UpdateIncome)
+		api.GET("/config/pockets", configController.GetPockets)
+		api.POST("/config/pockets", configController.CreatePocket)
+		api.PUT("/config/pockets/:id", configController.UpdatePocket)
+		api.DELETE("/config/pockets/:id", configController.DeletePocket)
 
-func cyclesUrls(router *gin.Engine) {
-	router.GET("/cycles", cycles.GetAll)
-	router.GET("/cycles/active", cycles.GetActive)
-	router.GET("/cycles/:cycle_id", cycles.GetByID)
-	router.GET("/cycles/:cycle_id/expenses", expenses.GetByCycleID)
-	router.POST("/cycles", cycles.Create)
-	router.PUT("/cycles/:cycle_id", cycles.Update)
-	router.DELETE("/cycles/:cycle_id", cycles.Delete)
-	router.POST("/cycles/:cycle_id/finish", cycles.Finish)
-}
+		// Gastos fijos
+		api.GET("/fixed-expenses/:month", fixedExpensesController.GetByMonth)
+		api.PUT("/fixed-expenses/:id/status", fixedExpensesController.UpdateStatus)
 
-func budgetsUrls(router *gin.Engine) {
-	router.POST("/budgets/:cycle_id", budget.Calculate)
-}
-
-func conceptsUrls(router *gin.Engine) {
-	router.GET("/pockets/:pocket_id/concepts", concepts.GetByPocketID)
-	router.GET("/concepts/:concept_id", concepts.GetByID)
-	router.POST("/concepts", concepts.Create)
-	router.PUT("/concepts/:concept_id", concepts.Update)
-	router.PUT("/concepts/payed/:concept_id", concepts.PayedUpdate)
-	router.DELETE("/concepts/:concept_id", concepts.Delete)
+		// Gastos diarios
+		api.GET("/daily-expenses/:month", dailyExpensesController.GetByMonth)
+		api.POST("/daily-expenses", dailyExpensesController.Create)
+		api.PUT("/daily-expenses/:id", dailyExpensesController.Update)
+		api.DELETE("/daily-expenses/:id", dailyExpensesController.Delete)
+	}
 }

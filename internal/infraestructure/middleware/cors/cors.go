@@ -1,9 +1,7 @@
 package cors
 
 import (
-	"expenses-api/internal/infraestructure/client/firestore"
 	"expenses-api/internal/infraestructure/middleware"
-	"expenses-api/internal/util/constants"
 	"expenses-api/internal/util/environment"
 	"github.com/gin-gonic/gin"
 )
@@ -31,18 +29,8 @@ func NewCorsMiddleware() middleware.Middleware {
 }
 
 func getCorsOrigin() string {
-	var corsOriginValue string
-	var err error
-
-	switch environment.IsProductionEnv() {
-	case true:
-		corsOriginValue, err = firestore.GetValue(constants.CorsOriginProd)
-	case false:
-		corsOriginValue, err = firestore.GetValue(constants.CorsOriginDev)
+	if environment.IsProductionEnv() {
+		return "https://your-frontend-domain.com" // TODO: Configurar dominio de producción
 	}
-	if err != nil {
-		return ""
-	}
-
-	return corsOriginValue
+	return "http://localhost:4200" // Angular dev server
 }
