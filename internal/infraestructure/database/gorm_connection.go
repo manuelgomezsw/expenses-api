@@ -130,10 +130,8 @@ func (d *Database) Close() error {
 	return sqlDB.Close()
 }
 
-// Migrate runs database migrations for all models
-func (d *Database) Migrate(models ...interface{}) error {
-	return d.DB.AutoMigrate(models...)
-}
+// Note: Database migrations are handled manually via SQL scripts
+// See sql/database/ directory for schema management
 
 // Transaction executes a function within a database transaction
 func (d *Database) Transaction(fn func(*gorm.DB) error) error {
