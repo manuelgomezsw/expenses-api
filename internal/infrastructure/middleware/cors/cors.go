@@ -1,7 +1,7 @@
 package cors
 
 import (
-	"expenses-api/internal/infraestructure/middleware"
+	"expenses-api/internal/infrastructure/middleware"
 	"expenses-api/internal/util/environment"
 	"github.com/gin-gonic/gin"
 )

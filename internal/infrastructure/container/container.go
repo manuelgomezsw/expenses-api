@@ -2,9 +2,9 @@ package container
 
 import (
 	"expenses-api/internal/application/usecase"
-	"expenses-api/internal/infraestructure/database"
+	"expenses-api/internal/infrastructure/database"
 	"expenses-api/internal/infrastructure/handler"
-	"expenses-api/internal/infraestructure/repository"
+	"expenses-api/internal/infrastructure/repository"
 	
 	"gorm.io/gorm"
 )

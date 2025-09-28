@@ -1,7 +1,7 @@
 package router
 
 import (
-	"expenses-api/internal/infraestructure/middleware/cors"
+	"expenses-api/internal/infrastructure/middleware/cors"
 	"github.com/gin-gonic/gin"
 	"log"
 	"os"
