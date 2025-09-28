@@ -1,0 +1,70 @@
+{
+    "go.toolsManagement.checkForUpdates": "local",
+    "go.useLanguageServer": true,
+    "go.gopath": "",
+    "go.goroot": "",
+    "go.buildOnSave": "off",
+    "go.lintOnSave": "package",
+    "go.vetOnSave": "package",
+    "go.formatTool": "goimports",
+    "go.lintTool": "golint",
+    "go.testFlags": ["-v"],
+    "go.testTimeout": "30s",
+    "go.coverOnSave": false,
+    "go.coverOnSingleTest": false,
+    "go.coverageDecorator": {
+        "type": "gutter",
+        "coveredHighlightColor": "rgba(64,128,128,0.5)",
+        "uncoveredHighlightColor": "rgba(128,64,64,0.25)",
+        "coveredGutterStyle": "blockblue",
+        "uncoveredGutterStyle": "blockred"
+    },
+    "go.delveConfig": {
+        "dlvLoadConfig": {
+            "followPointers": true,
+            "maxVariableRecurse": 1,
+            "maxStringLen": 64,
+            "maxArrayValues": 64,
+            "maxStructFields": -1
+        },
+        "apiVersion": 2,
+        "showGlobalVariables": false
+    },
+    "files.exclude": {
+        "main": true,
+        "**/.DS_Store": true
+    },
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    "[go]": {
+        "editor.formatOnSave": true,
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    },
+    "terminal.integrated.env.osx": {
+        "APP_ENV": "development",
+        "PORT": "8080",
+        "DB_HOST": "localhost:3306",
+        "DB_USER": "root",
+        "DB_PASSWORD": "your_password_here",
+        "DB_NAME": "expenses_db"
+    },
+    "terminal.integrated.env.linux": {
+        "APP_ENV": "development",
+        "PORT": "8080",
+        "DB_HOST": "localhost:3306",
+        "DB_USER": "root",
+        "DB_PASSWORD": "your_password_here",
+        "DB_NAME": "expenses_db"
+    },
+    "terminal.integrated.env.windows": {
+        "APP_ENV": "development",
+        "PORT": "8080",
+        "DB_HOST": "localhost:3306",
+        "DB_USER": "root",
+        "DB_PASSWORD": "your_password_here",
+        "DB_NAME": "expenses_db"
+    }
+}

@@ -1,0 +1,130 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🔨 Build",
+            "type": "shell",
+            "command": "go",
+            "args": ["build", "-o", "main", "."],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": ["$go"]
+        },
+        {
+            "label": "🚀 Run",
+            "type": "shell",
+            "command": "go",
+            "args": ["run", "."],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "new",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "env": {
+                "APP_ENV": "development",
+                "PORT": "8080",
+                "DB_HOST": "localhost:3306",
+                "DB_USER": "root",
+                "DB_PASSWORD": "your_password_here",
+                "DB_NAME": "expenses_db"
+            },
+            "problemMatcher": ["$go"],
+            "runOptions": {
+                "runOn": "folderOpen"
+            }
+        },
+        {
+            "label": "🧪 Test",
+            "type": "shell",
+            "command": "go",
+            "args": ["test", "./..."],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "problemMatcher": ["$go"]
+        },
+        {
+            "label": "🧹 Clean",
+            "type": "shell",
+            "command": "rm",
+            "args": ["-f", "main"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "📦 Tidy",
+            "type": "shell",
+            "command": "go",
+            "args": ["mod", "tidy"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": ["$go"]
+        },
+        {
+            "label": "🗄️ Setup Database",
+            "type": "shell",
+            "command": "mysql",
+            "args": ["-u", "root", "-p", "<", "sql/database/setup_database.sql"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "new",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🌱 Seed Database",
+            "type": "shell",
+            "command": "mysql",
+            "args": ["-u", "root", "-p", "expenses_db", "<", "sql/database/04_insert_initial_data.sql"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "new",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

@@ -1,0 +1,86 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "🚀 Run Expenses API",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}",
+            "env": {
+                "APP_ENV": "development",
+                "PORT": "8080",
+                "DB_HOST": "localhost:3306",
+                "DB_USER": "root",
+                "DB_PASSWORD": "your_password_here",
+                "DB_NAME": "expenses_db"
+            },
+            "args": [],
+            "showLog": false,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "name": "🐛 Debug Expenses API",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}",
+            "env": {
+                "APP_ENV": "development",
+                "PORT": "8080",
+                "DB_HOST": "localhost:3306",
+                "DB_USER": "root",
+                "DB_PASSWORD": "your_password_here",
+                "DB_NAME": "expenses_db"
+            },
+            "args": [],
+            "showLog": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "stopOnEntry": false,
+            "dlvFlags": [
+                "--check-go-version=false"
+            ]
+        },
+        {
+            "name": "🧪 Debug with Test Database",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}",
+            "env": {
+                "APP_ENV": "development",
+                "PORT": "8081",
+                "DB_HOST": "localhost:3306",
+                "DB_USER": "root",
+                "DB_PASSWORD": "your_password_here",
+                "DB_NAME": "expenses_db_test"
+            },
+            "args": [],
+            "showLog": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "stopOnEntry": false
+        },
+        {
+            "name": "🌐 Run with Production Settings",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}",
+            "env": {
+                "APP_ENV": "production",
+                "PORT": "8080",
+                "DB_HOST": "localhost:3306",
+                "DB_USER": "root",
+                "DB_PASSWORD": "your_password_here",
+                "DB_NAME": "expenses_db"
+            },
+            "args": [],
+            "showLog": false,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
+}
