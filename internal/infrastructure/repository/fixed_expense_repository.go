@@ -75,9 +75,10 @@ func (r *FixedExpenseRepository) UpdatePaymentStatus(id uint, isPaid bool, paidD
 		updates["paid_date"] = nil
 	}
 
+	// Use UpdateColumns to skip hooks and avoid validation errors
 	return r.db.Model(&fixed_expense.FixedExpense{}).
 		Where("id = ?", id).
-		Updates(updates).Error
+		UpdateColumns(updates).Error
 }
 
 // GetPaidByMonth retrieves all paid fixed expenses for a specific month
