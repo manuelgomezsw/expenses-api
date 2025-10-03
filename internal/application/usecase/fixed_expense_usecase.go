@@ -63,7 +63,6 @@ func (uc *FixedExpenseUseCase) Create(expense *fixed_expense.FixedExpense) error
 	}
 
 	// Set default values
-	expense.IsPaid = false
 	expense.PaidDate = nil
 
 	return uc.fixedExpenseRepo.Create(expense)

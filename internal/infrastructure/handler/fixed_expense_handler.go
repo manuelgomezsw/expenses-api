@@ -58,15 +58,14 @@ func (h *FixedExpenseHandler) GetByMonth(c *gin.Context) {
 		}
 
 		expenseDTOs = append(expenseDTOs, dto.FixedExpenseDTO{
-			ID:        int(expense.ID),
-			Name:      expense.ConceptName,
-			Amount:    expense.Amount,
-			DueDate:   expense.PaymentDay,
-			PocketID:  int(expense.PocketID),
-			Month:     expense.Month,
-			IsPaid:    expense.IsPaid,
-			PaidDate:  paidDate,
-			CreatedAt: &expense.CreatedAt,
+			ID:       int(expense.ID),
+			Name:     expense.ConceptName,
+			Amount:   expense.Amount,
+			DueDate:  expense.PaymentDay,
+			PocketID: int(expense.PocketID),
+			Month:    expense.Month,
+			IsPaid:   expense.IsPaid,
+			PaidDate: paidDate,
 		})
 	}
 
@@ -140,18 +139,8 @@ func (h *FixedExpenseHandler) Create(c *gin.Context) {
 		Amount:      expenseDTO.Amount,
 		PaymentDay:  expenseDTO.DueDate,
 		PocketID:    uint(expenseDTO.PocketID),
-		Month:       time.Now().Format("2006-01"), // Default to current month if not provided
-	}
-
-	// If month is provided in DTO or query param, use it
-	if expenseDTO.Month != "" {
-		if _, err := time.Parse("2006-01", expenseDTO.Month); err == nil {
-			expense.Month = expenseDTO.Month
-		}
-	} else if monthParam := c.Query("month"); monthParam != "" {
-		if _, err := time.Parse("2006-01", monthParam); err == nil {
-			expense.Month = monthParam
-		}
+		Month:       time.Now().Format("2006-01"), // Siempre usar mes actual
+		IsPaid:      false,                        // Siempre false por defecto
 	}
 
 	// Create expense using use case
@@ -166,15 +155,14 @@ func (h *FixedExpenseHandler) Create(c *gin.Context) {
 
 	// Convert back to DTO for response
 	responseDTO := dto.FixedExpenseDTO{
-		ID:        int(expense.ID),
-		Name:      expense.ConceptName,
-		Amount:    expense.Amount,
-		DueDate:   expense.PaymentDay,
-		PocketID:  int(expense.PocketID),
-		Month:     expense.Month,
-		IsPaid:    expense.IsPaid,
-		PaidDate:  nil,
-		CreatedAt: &expense.CreatedAt,
+		ID:       int(expense.ID),
+		Name:     expense.ConceptName,
+		Amount:   expense.Amount,
+		DueDate:  expense.PaymentDay,
+		PocketID: int(expense.PocketID),
+		Month:    expense.Month,
+		IsPaid:   expense.IsPaid,
+		PaidDate: nil,
 	}
 
 	c.JSON(http.StatusCreated, responseDTO)
@@ -207,18 +195,7 @@ func (h *FixedExpenseHandler) Update(c *gin.Context) {
 		Amount:      expenseDTO.Amount,
 		PaymentDay:  expenseDTO.DueDate,
 		PocketID:    uint(expenseDTO.PocketID),
-		Month:       time.Now().Format("2006-01"), // Default to current month
-	}
-
-	// If month is provided in DTO or query param, use it
-	if expenseDTO.Month != "" {
-		if _, err := time.Parse("2006-01", expenseDTO.Month); err == nil {
-			updatedExpense.Month = expenseDTO.Month
-		}
-	} else if monthParam := c.Query("month"); monthParam != "" {
-		if _, err := time.Parse("2006-01", monthParam); err == nil {
-			updatedExpense.Month = monthParam
-		}
+		Month:       time.Now().Format("2006-01"), // Siempre usar mes actual
 	}
 
 	// Update expense using use case
@@ -264,15 +241,14 @@ func (h *FixedExpenseHandler) Update(c *gin.Context) {
 	}
 
 	responseDTO := dto.FixedExpenseDTO{
-		ID:        int(updatedExpenseFromDB.ID),
-		Name:      updatedExpenseFromDB.ConceptName,
-		Amount:    updatedExpenseFromDB.Amount,
-		DueDate:   updatedExpenseFromDB.PaymentDay,
-		PocketID:  int(updatedExpenseFromDB.PocketID),
-		Month:     updatedExpenseFromDB.Month,
-		IsPaid:    updatedExpenseFromDB.IsPaid,
-		PaidDate:  paidDate,
-		CreatedAt: &updatedExpenseFromDB.CreatedAt,
+		ID:       int(updatedExpenseFromDB.ID),
+		Name:     updatedExpenseFromDB.ConceptName,
+		Amount:   updatedExpenseFromDB.Amount,
+		DueDate:  updatedExpenseFromDB.PaymentDay,
+		PocketID: int(updatedExpenseFromDB.PocketID),
+		Month:    updatedExpenseFromDB.Month,
+		IsPaid:   updatedExpenseFromDB.IsPaid,
+		PaidDate: paidDate,
 	}
 
 	c.JSON(http.StatusOK, responseDTO)

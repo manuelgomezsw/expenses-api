@@ -11,15 +11,14 @@ import (
 // FixedExpense represents monthly fixed expenses
 // Maps to frontend interface: FixedExpense { id?, pocket_name, concept_name, amount, payment_day, is_paid, month, paid_date?, created_at? }
 type FixedExpense struct {
-	ID          uint      `gorm:"primaryKey" json:"id"`
-	PocketID    uint      `gorm:"not null;index:idx_pocket_month,priority:1" json:"pocket_id"`
-	ConceptName string    `gorm:"size:255;not null" json:"concept_name"`
-	Amount      float64   `gorm:"type:decimal(15,2);not null" json:"amount"`
-	PaymentDay  int       `gorm:"not null;check:payment_day >= 1 AND payment_day <= 31" json:"payment_day"`
-	IsPaid      bool      `gorm:"default:false;index" json:"is_paid"`
-	Month       string    `gorm:"size:7;not null;index:idx_pocket_month,priority:2" json:"month"` // Format: "2024-01"
-	PaidDate    *string   `gorm:"size:10" json:"paid_date"`                                       // Format: "2024-01-15"
-	CreatedAt   time.Time `gorm:"autoCreateTime" json:"created_at"`
+	ID          uint    `gorm:"primaryKey" json:"id"`
+	PocketID    uint    `gorm:"not null;index:idx_pocket_month,priority:1" json:"pocket_id"`
+	ConceptName string  `gorm:"size:255;not null" json:"concept_name"`
+	Amount      float64 `gorm:"type:decimal(15,2);not null" json:"amount"`
+	PaymentDay  int     `gorm:"not null;check:payment_day >= 1 AND payment_day <= 31" json:"payment_day"`
+	IsPaid      bool    `gorm:"default:false;index" json:"is_paid"`
+	Month       string  `gorm:"size:7;not null;index:idx_pocket_month,priority:2" json:"month"` // Format: "2024-01"
+	PaidDate    *string `gorm:"size:10" json:"paid_date"`                                       // Format: "2024-01-15"
 
 	// Relationship - will be loaded when needed
 	Pocket *Pocket `gorm:"foreignKey:PocketID" json:"pocket,omitempty"`
