@@ -3,6 +3,7 @@ package handler
 import (
 	"expenses-api/internal/api/dto"
 	"expenses-api/internal/application/usecase"
+	"expenses-api/internal/domain/daily_expense"
 	"net/http"
 	"strconv"
 	"time"
@@ -54,7 +55,7 @@ func (h *DailyExpenseHandler) GetByMonth(c *gin.Context) {
 			Amount:      expense.Amount,
 			Description: expense.Description,
 			Date:        expense.Date,
-			PocketID:    1, // TODO: Add pocket relationship if needed
+			CreatedAt:   expense.CreatedAt,
 		})
 	}
 
@@ -73,11 +74,11 @@ func (h *DailyExpenseHandler) Create(c *gin.Context) {
 		return
 	}
 
-	// Create daily expense using use case
+	// Create daily expense using use case with current date
 	expense, err := h.dailyExpenseUseCase.Create(
 		expenseDTO.Description,
 		expenseDTO.Amount,
-		expenseDTO.Date,
+		daily_expense.GetCurrentDate(), // Usar fecha actual automáticamente
 	)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -93,7 +94,7 @@ func (h *DailyExpenseHandler) Create(c *gin.Context) {
 		Amount:      expense.Amount,
 		Description: expense.Description,
 		Date:        expense.Date,
-		PocketID:    expenseDTO.PocketID,
+		CreatedAt:   expense.CreatedAt,
 	}
 
 	c.JSON(http.StatusCreated, responseDTO)
@@ -120,12 +121,12 @@ func (h *DailyExpenseHandler) Update(c *gin.Context) {
 		return
 	}
 
-	// Update daily expense using use case
+	// Update daily expense using use case (keep original date)
 	expense, err := h.dailyExpenseUseCase.Update(
 		uint(id),
 		expenseDTO.Description,
 		expenseDTO.Amount,
-		expenseDTO.Date,
+		"", // Empty date means keep original date
 	)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -141,7 +142,7 @@ func (h *DailyExpenseHandler) Update(c *gin.Context) {
 		Amount:      expense.Amount,
 		Description: expense.Description,
 		Date:        expense.Date,
-		PocketID:    expenseDTO.PocketID,
+		CreatedAt:   expense.CreatedAt,
 	}
 
 	c.JSON(http.StatusOK, responseDTO)

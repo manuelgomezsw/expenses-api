@@ -24,11 +24,11 @@ type FixedExpenseDTO struct {
 
 // DailyExpenseDTO representa un gasto diario para el frontend
 type DailyExpenseDTO struct {
-	ID          int     `json:"id"`
-	Amount      float64 `json:"amount" binding:"required,min=0"`
-	Description string  `json:"description" binding:"required,min=1,max=255"`
-	Date        string  `json:"date" binding:"required"`
-	PocketID    int     `json:"pocket_id" binding:"required,min=1"`
+	ID          int       `json:"id"`
+	Amount      float64   `json:"amount" binding:"required,min=0"`
+	Description string    `json:"description" binding:"required,min=1,max=255"`
+	Date        string    `json:"date,omitempty"`       // Opcional, se asigna automáticamente a la fecha actual
+	CreatedAt   time.Time `json:"created_at,omitempty"` // Timestamp de creación
 }
 
 // PocketDTO representa un bolsillo para el frontend
