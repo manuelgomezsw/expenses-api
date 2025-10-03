@@ -2,8 +2,9 @@ package router
 
 import (
 	"expenses-api/internal/infrastructure/container"
-	"github.com/gin-gonic/gin"
 	"log"
+
+	"github.com/gin-gonic/gin"
 )
 
 func mapURLs(router *gin.Engine) {
@@ -34,6 +35,8 @@ func frontendUrls(router *gin.Engine, c *container.Container) {
 
 		// Gastos fijos
 		api.GET("/fixed-expenses/:month", c.FixedExpenseHandler.GetByMonth)
+		api.POST("/fixed-expenses", c.FixedExpenseHandler.Create)
+		api.PUT("/fixed-expenses/:id", c.FixedExpenseHandler.Update)
 		api.PUT("/fixed-expenses/:id/status", c.FixedExpenseHandler.UpdateStatus)
 
 		// Gastos diarios

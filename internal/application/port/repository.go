@@ -15,7 +15,7 @@ type SalaryRepository interface {
 	CreateOrUpdate(s *salary.Salary) error
 }
 
-// PocketRepository defines the interface for pocket data operations  
+// PocketRepository defines the interface for pocket data operations
 // Frontend endpoints: GET/POST/PUT/DELETE /api/config/pockets
 type PocketRepository interface {
 	GetAll() ([]pocket.Pocket, error)
@@ -27,9 +27,12 @@ type PocketRepository interface {
 }
 
 // FixedExpenseRepository defines the interface for fixed expense data operations
-// Frontend endpoints: GET /api/fixed-expenses/{month}, PUT /api/fixed-expenses/{id}/status
+// Frontend endpoints: GET /api/fixed-expenses/{month}, POST/PUT /api/fixed-expenses, PUT /api/fixed-expenses/{id}/status
 type FixedExpenseRepository interface {
 	GetByMonth(month string) ([]fixed_expense.FixedExpense, error)
+	GetByID(id uint) (*fixed_expense.FixedExpense, error)
+	Create(expense *fixed_expense.FixedExpense) error
+	Update(expense *fixed_expense.FixedExpense) error
 	UpdatePaymentStatus(id uint, isPaid bool, paidDate *string) error
 }
 

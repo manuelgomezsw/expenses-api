@@ -16,6 +16,8 @@ type FixedExpenseDTO struct {
 	Name      string     `json:"name" binding:"required,min=1,max=255"`
 	Amount    float64    `json:"amount" binding:"required,min=0"`
 	DueDate   int        `json:"due_date" binding:"required,min=1,max=31"`
+	PocketID  int        `json:"pocket_id" binding:"required,min=1"`
+	Month     string     `json:"month,omitempty"`
 	IsPaid    bool       `json:"is_paid"`
 	PaidDate  *time.Time `json:"paid_date,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
