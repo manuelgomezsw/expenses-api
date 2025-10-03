@@ -85,7 +85,7 @@ func (h *FixedExpenseHandler) UpdateStatus(c *gin.Context) {
 	}
 
 	var statusUpdate struct {
-		IsPaid bool `json:"is_paid" binding:"required"`
+		IsPaid *bool `json:"is_paid" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&statusUpdate); err != nil {
@@ -96,8 +96,16 @@ func (h *FixedExpenseHandler) UpdateStatus(c *gin.Context) {
 		return
 	}
 
+	// Validate that is_paid was provided
+	if statusUpdate.IsPaid == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "is_paid field is required",
+		})
+		return
+	}
+
 	// Update payment status using use case
-	err = h.fixedExpenseUseCase.UpdatePaymentStatus(uint(id), statusUpdate.IsPaid)
+	err = h.fixedExpenseUseCase.UpdatePaymentStatus(uint(id), *statusUpdate.IsPaid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "Error updating payment status",
@@ -109,10 +117,10 @@ func (h *FixedExpenseHandler) UpdateStatus(c *gin.Context) {
 	response := gin.H{
 		"message": "Status updated successfully",
 		"id":      id,
-		"is_paid": statusUpdate.IsPaid,
+		"is_paid": *statusUpdate.IsPaid,
 	}
 
-	if statusUpdate.IsPaid {
+	if *statusUpdate.IsPaid {
 		now := time.Now()
 		response["paid_date"] = now
 	}
