@@ -10,10 +10,9 @@ import (
 // DailyExpenseConfig represents monthly budget configuration for daily expenses
 // Maps to frontend interface: DailyExpensesConfig { id?, monthly_budget, month }
 type DailyExpenseConfig struct {
-	ID            uint      `gorm:"primaryKey" json:"id"`
-	MonthlyBudget float64   `gorm:"type:decimal(15,2);not null" json:"monthly_budget"`
-	Month         string    `gorm:"size:7;not null;uniqueIndex" json:"month"` // Format: "2024-01"
-	CreatedAt     time.Time `gorm:"autoCreateTime" json:"created_at"`
+	ID            uint    `gorm:"primaryKey" json:"id"`
+	MonthlyBudget float64 `gorm:"type:decimal(15,2);not null" json:"monthly_budget"`
+	Month         string  `gorm:"size:7;not null;uniqueIndex" json:"month"` // Format: "2024-01"
 }
 
 // TableName specifies the table name for GORM

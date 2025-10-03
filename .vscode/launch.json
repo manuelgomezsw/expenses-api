@@ -7,6 +7,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
+            "preLaunchTask": "🔪 Kill Instances",
             "env": {
                 "ENV": "development",
                 "PORT": "8080",
@@ -30,6 +31,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}",
+            "preLaunchTask": "🔪 Kill Instances",
             "env": {
                 "ENV": "development",
                 "PORT": "8080",
@@ -57,6 +59,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}",
+            "preLaunchTask": "🔪 Kill Instances",
             "env": {
                 "ENV": "development",
                 "PORT": "8081",
@@ -77,6 +80,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
+            "preLaunchTask": "🔪 Kill Instances",
             "env": {
                 "ENV": "production",
                 "PORT": "8080",

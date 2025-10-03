@@ -3,7 +3,6 @@ package pocket
 import (
 	"errors"
 	"strings"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -11,10 +10,9 @@ import (
 // Pocket represents organizational categories for expenses
 // Maps to frontend interface: Pocket { id?, name, description?, created_at? }
 type Pocket struct {
-	ID          uint      `gorm:"primaryKey" json:"id"`
-	Name        string    `gorm:"size:255;not null;uniqueIndex" json:"name"`
-	Description string    `gorm:"type:text" json:"description"`
-	CreatedAt   time.Time `gorm:"autoCreateTime" json:"created_at"`
+	ID          uint   `gorm:"primaryKey" json:"id"`
+	Name        string `gorm:"size:255;not null;uniqueIndex" json:"name"`
+	Description string `gorm:"type:text" json:"description"`
 }
 
 // TableName specifies the table name for GORM

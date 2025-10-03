@@ -3,6 +3,7 @@
 ## 🎯 Environment Configuration Strategy
 
 ### **Local Development** → `.env` file
+
 ### **GCP Production** → `app.yaml` + Secret Manager
 
 ---
@@ -10,6 +11,7 @@
 ## 🔧 Local Development Setup
 
 ### 1. **Create `.env` file:**
+
 ```bash
 # Copy template
 cp env.example .env
@@ -19,6 +21,7 @@ nano .env
 ```
 
 ### 2. **Local `.env` example:**
+
 ```bash
 ENV=development
 PORT=8080
@@ -36,6 +39,7 @@ LOG_LEVEL=info
 ```
 
 ### 3. **Run locally:**
+
 ```bash
 ./dev.sh run
 ```
@@ -47,6 +51,7 @@ LOG_LEVEL=info
 ### **Option A: Direct Environment Variables (Simple)**
 
 Update `app.yaml`:
+
 ```yaml
 env_variables:
   ENV: "production"
@@ -58,6 +63,7 @@ env_variables:
 ### **Option B: Secret Manager (Recommended for Production)**
 
 #### 1. **Create secrets in GCP:**
+
 ```bash
 # Database connection string
 gcloud secrets create db-dsn --data-file=- <<< "quotes-user:M9@I*49e2b#9Ek}_@tcp(34.23.218.229:3306)/quotes?parseTime=true"
@@ -70,6 +76,7 @@ gcloud secrets create cors-origin --data-file=- <<< "https://your-frontend-domai
 ```
 
 #### 2. **Update `app.yaml` to use secrets:**
+
 ```yaml
 runtime: go122
 instance_class: F1
@@ -87,16 +94,17 @@ beta_settings:
 
 # Use Secret Manager
 includes:
-- env_variables:
-    DB_DSN:
-      _secret: "db-dsn"
-    JWT_SECRET:
-      _secret: "jwt-secret"
-    CORS_ALLOWED_ORIGIN:
-      _secret: "cors-origin"
+  - env_variables:
+      DB_DSN:
+        _secret: "db-dsn"
+      JWT_SECRET:
+        _secret: "jwt-secret"
+      CORS_ALLOWED_ORIGIN:
+        _secret: "cors-origin"
 ```
 
 #### 3. **Grant permissions:**
+
 ```bash
 # Allow App Engine to access secrets
 gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
@@ -109,6 +117,7 @@ gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
 ## 🗄️ Database Configuration
 
 ### **Local Development:**
+
 ```bash
 # Individual variables
 DB_HOST=localhost:3306
@@ -118,6 +127,7 @@ DB_NAME=expenses_db
 ```
 
 ### **GCP Production:**
+
 ```bash
 # Single DSN (preferred)
 DB_DSN=user:password@tcp(host:port)/database?parseTime=true
@@ -131,18 +141,22 @@ DB_DSN=user:password@unix(/cloudsql/project:region:instance)/database?parseTime=
 ## 🔐 Security Best Practices
 
 ### **1. Environment-specific secrets:**
+
 - **Development:** Use `.env` file (never commit)
 - **Production:** Use GCP Secret Manager
 
 ### **2. JWT Secrets:**
+
 - **Development:** Simple string in `.env`
 - **Production:** Strong random secret in Secret Manager
 
 ### **3. Database Credentials:**
+
 - **Development:** Local MySQL credentials
 - **Production:** Cloud SQL with IAM or strong passwords
 
 ### **4. CORS Origins:**
+
 - **Development:** `http://localhost:4200`
 - **Production:** Your actual frontend domain
 
@@ -151,6 +165,7 @@ DB_DSN=user:password@unix(/cloudsql/project:region:instance)/database?parseTime=
 ## 🚀 Deployment Commands
 
 ### **Deploy to App Engine:**
+
 ```bash
 # Build and deploy
 gcloud app deploy
@@ -163,6 +178,7 @@ gcloud app deploy app.yaml
 ```
 
 ### **Environment Variables Check:**
+
 ```bash
 # View current environment variables
 gcloud app versions describe VERSION_ID --service=expenses-api
@@ -178,12 +194,14 @@ gcloud app logs tail -s expenses-api
 The application automatically validates configuration on startup:
 
 ### **Required Variables:**
+
 - ✅ `PORT` - Server port
 - ✅ `ENV` - Environment (development/production)
 - ✅ Database connection (either `DB_DSN` or individual `DB_*` vars)
 - ✅ `JWT_SECRET` - Must not be default in production
 
 ### **Startup Logs:**
+
 ```
 Starting Expenses API in production mode on port 8080
 Connecting to database with DSN: user:****@tcp(host:port)/db
@@ -195,6 +213,7 @@ GORM database connection established successfully
 ## 🧪 Testing Configuration
 
 ### **Local Test:**
+
 ```bash
 # Test with development config
 ./dev.sh run
@@ -204,6 +223,7 @@ ENV=production ./dev.sh run
 ```
 
 ### **GCP Test:**
+
 ```bash
 # Deploy to staging
 gcloud app deploy --version=staging
@@ -219,11 +239,13 @@ curl https://staging-dot-expenses-api-dot-YOUR_PROJECT.appspot.com/health
 ### **Common Issues:**
 
 1. **Database Connection Failed:**
+
    - Check DSN format
    - Verify Cloud SQL instance is running
    - Check firewall rules
 
 2. **Secret Manager Access Denied:**
+
    - Verify IAM permissions
    - Check service account has `secretmanager.secretAccessor` role
 
@@ -232,6 +254,7 @@ curl https://staging-dot-expenses-api-dot-YOUR_PROJECT.appspot.com/health
    - Check protocol (http vs https)
 
 ### **Debug Commands:**
+
 ```bash
 # Check environment variables
 gcloud app versions describe VERSION_ID --service=expenses-api
@@ -248,14 +271,16 @@ gcloud sql connect INSTANCE_NAME --user=USERNAME
 ## ✅ Deployment Checklist
 
 ### **Before Deployment:**
+
 - [ ] Update `DB_DSN` with production database
-- [ ] Set strong `JWT_SECRET` 
+- [ ] Set strong `JWT_SECRET`
 - [ ] Configure correct `CORS_ALLOWED_ORIGIN`
 - [ ] Set `ENV=production`
 - [ ] Set `DEBUG=false`
 - [ ] Test locally with production-like config
 
 ### **After Deployment:**
+
 - [ ] Verify application starts successfully
 - [ ] Test database connectivity
 - [ ] Test API endpoints

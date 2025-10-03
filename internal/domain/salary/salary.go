@@ -10,10 +10,9 @@ import (
 // Salary represents monthly salary configuration
 // Maps to frontend interface: Salary { id?, monthly_amount, month, created_at? }
 type Salary struct {
-	ID            uint      `gorm:"primaryKey" json:"id"`
-	MonthlyAmount float64   `gorm:"type:decimal(15,2);not null" json:"monthly_amount"`
-	Month         string    `gorm:"size:7;not null;uniqueIndex" json:"month"` // Format: "2024-01"
-	CreatedAt     time.Time `gorm:"autoCreateTime" json:"created_at"`
+	ID            uint    `gorm:"primaryKey" json:"id"`
+	MonthlyAmount float64 `gorm:"type:decimal(15,2);not null" json:"monthly_amount"`
+	Month         string  `gorm:"size:7;not null;uniqueIndex" json:"month"` // Format: "2024-01"
 }
 
 // TableName specifies the table name for GORM

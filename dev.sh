@@ -50,6 +50,9 @@ case "${1:-run}" in
         print_success "Build completed!"
         ;;
     "run")
+        echo "🔪 Killing any running instances..."
+        ./scripts/kill-instances.sh
+        echo ""
         echo "🚀 Starting Expenses API..."
         echo "📍 Server will run on: http://localhost:$PORT"
         echo "🗄️  Database: $DB_HOST/$DB_NAME"
@@ -58,7 +61,14 @@ case "${1:-run}" in
         echo ""
         go run .
         ;;
+    "kill")
+        echo "🔪 Killing all running instances..."
+        ./scripts/kill-instances.sh
+        ;;
     "debug")
+        echo "🔪 Killing any running instances..."
+        ./scripts/kill-instances.sh
+        echo ""
         echo "🐛 Starting in debug mode..."
         export DEBUG=true
         export LOG_LEVEL=debug
@@ -113,6 +123,7 @@ case "${1:-run}" in
         echo "  build     - Build the application"
         echo "  run       - Run the application (default)"
         echo "  debug     - Run with debug logging"
+        echo "  kill      - Kill all running instances"
         echo "  test      - Run tests"
         echo "  clean     - Clean build artifacts"
         echo "  setup     - Setup development environment"
