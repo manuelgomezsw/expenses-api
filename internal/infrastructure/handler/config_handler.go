@@ -5,6 +5,7 @@ import (
 	"expenses-api/internal/application/usecase"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -62,8 +63,8 @@ func (h *ConfigHandler) UpdateIncome(c *gin.Context) {
 	}
 
 	// Get current month
-	currentMonth := "2024-01" // TODO: Use time.Now().Format("2006-01")
-	
+	currentMonth := time.Now().Format("2006-01")
+
 	// Update salary using use case
 	err := h.salaryUseCase.UpdateSalary(salaryDTO.MonthlyAmount, currentMonth)
 	if err != nil {
@@ -93,10 +94,9 @@ func (h *ConfigHandler) GetPockets(c *gin.Context) {
 	var pocketDTOs []dto.PocketDTO
 	for _, pocket := range pockets {
 		pocketDTOs = append(pocketDTOs, dto.PocketDTO{
-			ID:     int(pocket.ID),
-			Name:   pocket.Name,
-			Budget: 0,     // TODO: Add budget field to pocket model if needed
-			Color:  "#000000", // TODO: Add color field to pocket model if needed
+			ID:          int(pocket.ID),
+			Name:        pocket.Name,
+			Description: pocket.Description,
 		})
 	}
 
@@ -127,10 +127,10 @@ func (h *ConfigHandler) CreatePocket(c *gin.Context) {
 
 	// Return created pocket as DTO
 	responseDTO := dto.PocketDTO{
-		ID:     int(pocket.ID),
-		Name:   pocket.Name,
-		Budget: pocketDTO.Budget,
-		Color:  pocketDTO.Color,
+		ID:          int(pocket.ID),
+		Name:        pocket.Name,
+		Budget:      pocketDTO.Budget,
+		Description: pocketDTO.Description,
 	}
 
 	c.JSON(http.StatusCreated, responseDTO)
@@ -169,10 +169,10 @@ func (h *ConfigHandler) UpdatePocket(c *gin.Context) {
 
 	// Return updated pocket as DTO
 	responseDTO := dto.PocketDTO{
-		ID:     int(pocket.ID),
-		Name:   pocket.Name,
-		Budget: pocketDTO.Budget,
-		Color:  pocketDTO.Color,
+		ID:          int(pocket.ID),
+		Name:        pocket.Name,
+		Budget:      pocketDTO.Budget,
+		Description: pocketDTO.Description,
 	}
 
 	c.JSON(http.StatusOK, responseDTO)

@@ -32,10 +32,10 @@ type DailyExpenseDTO struct {
 
 // PocketDTO representa un bolsillo para el frontend
 type PocketDTO struct {
-	ID     int     `json:"id"`
-	Name   string  `json:"name" binding:"required,min=1,max=100"`
-	Budget float64 `json:"budget" binding:"required,min=0"`
-	Color  string  `json:"color" binding:"required,hexcolor"`
+	ID          int     `json:"id"`
+	Name        string  `json:"name" binding:"required,min=1,max=50"`
+	Budget      float64 `json:"budget" binding:"required,min=0"`
+	Description string  `json:"description" binding:"required,min=1,max=50"`
 }
 
 // DailyExpensesConfigDTO representa la configuración de gastos diarios
