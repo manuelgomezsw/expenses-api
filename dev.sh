@@ -31,12 +31,14 @@ print_error() {
 }
 
 # Set environment variables
-export APP_ENV=development
+export ENV=development
 export PORT=8080
 export DB_HOST=localhost:3306
 export DB_USER=root
 export DB_PASSWORD=${DB_PASSWORD:-"your_password_here"}
 export DB_NAME=expenses_db
+export JWT_SECRET=dev-secret
+export CORS_ALLOWED_ORIGIN=http://localhost:4200
 
 # Main script
 print_header

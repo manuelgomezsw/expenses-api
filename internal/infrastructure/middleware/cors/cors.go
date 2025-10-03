@@ -1,8 +1,8 @@
 package cors
 
 import (
+	"expenses-api/internal/infrastructure/config"
 	"expenses-api/internal/infrastructure/middleware"
-	"os"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,9 +29,9 @@ func NewCorsMiddleware() middleware.Middleware {
 }
 
 func getCorsOrigin() string {
-	appEnv := os.Getenv("APP_ENV")
-	if appEnv == "production" {
-		return "https://your-frontend-domain.com" // TODO: Configurar dominio de producción
+	if config.AppConfig != nil {
+		return config.AppConfig.CORSAllowedOrigin
 	}
-	return "http://localhost:4200" // Angular dev server
+	// Fallback if config not loaded
+	return "http://localhost:4200"
 }

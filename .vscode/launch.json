@@ -8,12 +8,16 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "env": {
-                "APP_ENV": "development",
+                "ENV": "development",
                 "PORT": "8080",
                 "DB_HOST": "localhost:3306",
                 "DB_USER": "root",
                 "DB_PASSWORD": "your_password_here",
-                "DB_NAME": "expenses_db"
+                "DB_NAME": "expenses_db",
+                "JWT_SECRET": "dev-secret",
+                "CORS_ALLOWED_ORIGIN": "http://localhost:4200",
+                "DEBUG": "true",
+                "LOG_LEVEL": "info"
             },
             "args": [],
             "showLog": false,
@@ -27,12 +31,16 @@
             "mode": "debug",
             "program": "${workspaceFolder}",
             "env": {
-                "APP_ENV": "development",
+                "ENV": "development",
                 "PORT": "8080",
                 "DB_HOST": "localhost:3306",
                 "DB_USER": "root",
                 "DB_PASSWORD": "your_password_here",
-                "DB_NAME": "expenses_db"
+                "DB_NAME": "expenses_db",
+                "JWT_SECRET": "dev-secret",
+                "CORS_ALLOWED_ORIGIN": "http://localhost:4200",
+                "DEBUG": "true",
+                "LOG_LEVEL": "info"
             },
             "args": [],
             "showLog": true,
@@ -50,7 +58,7 @@
             "mode": "debug",
             "program": "${workspaceFolder}",
             "env": {
-                "APP_ENV": "development",
+                "ENV": "development",
                 "PORT": "8081",
                 "DB_HOST": "localhost:3306",
                 "DB_USER": "root",
@@ -70,12 +78,16 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "env": {
-                "APP_ENV": "production",
+                "ENV": "production",
                 "PORT": "8080",
                 "DB_HOST": "localhost:3306",
                 "DB_USER": "root",
                 "DB_PASSWORD": "your_password_here",
-                "DB_NAME": "expenses_db"
+                "DB_NAME": "expenses_db",
+                "JWT_SECRET": "dev-secret",
+                "CORS_ALLOWED_ORIGIN": "http://localhost:4200",
+                "DEBUG": "true",
+                "LOG_LEVEL": "info"
             },
             "args": [],
             "showLog": false,

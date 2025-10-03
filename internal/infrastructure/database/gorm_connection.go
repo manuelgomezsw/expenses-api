@@ -1,9 +1,11 @@
 package database
 
 import (
+	"expenses-api/internal/infrastructure/config"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -36,10 +38,13 @@ func GetDB() *gorm.DB {
 
 // initializeGORM creates and configures the GORM database connection
 func initializeGORM() (*gorm.DB, error) {
-	dsn, err := buildDSN()
-	if err != nil {
-		return nil, fmt.Errorf("failed to build DSN: %w", err)
+	cfg := config.AppConfig
+	if cfg == nil {
+		return nil, fmt.Errorf("configuration not loaded")
 	}
+
+	dsn := cfg.GetDSN()
+	log.Printf("Connecting to database with DSN: %s", maskPassword(dsn))
 
 	// Configure GORM
 	config := &gorm.Config{
@@ -71,30 +76,16 @@ func initializeGORM() (*gorm.DB, error) {
 	return db, nil
 }
 
-// buildDSN constructs the database connection string from environment variables
-func buildDSN() (string, error) {
-	dbUser := getEnvOrDefault("DB_USER", "root")
-	dbPassword := getEnvOrDefault("DB_PASSWORD", "")
-	dbHost := getEnvOrDefault("DB_HOST", "localhost:3306")
-	dbName := getEnvOrDefault("DB_NAME", "expenses_db")
-
-	if dbPassword == "" {
-		return "", fmt.Errorf("DB_PASSWORD environment variable is required")
+// maskPassword masks the password in DSN for logging
+func maskPassword(dsn string) string {
+	// Simple password masking for logs
+	// Format: user:password@tcp(host)/db
+	if idx := strings.Index(dsn, ":"); idx != -1 {
+		if idx2 := strings.Index(dsn[idx:], "@"); idx2 != -1 {
+			return dsn[:idx+1] + "****" + dsn[idx+idx2:]
+		}
 	}
-
-	// Build DSN for local MySQL or Cloud SQL
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		dbUser, dbPassword, dbHost, dbName)
-
-	return dsn, nil
-}
-
-// getEnvOrDefault gets environment variable or returns default value
-func getEnvOrDefault(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return defaultValue
+	return dsn
 }
 
 // getLoggerConfig returns the appropriate logger configuration based on environment

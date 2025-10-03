@@ -4,5 +4,23 @@ instance_class: F1
 service: expenses-api
 
 env_variables:
-  PROJECT_ID: quotes-api-100
-  APP_ENV: production
+  # Application Configuration
+  ENV: "production"
+  PORT: "8080"
+
+  # Database Configuration (Cloud SQL)
+  DB_DSN: "quotes-user:M9@I*49e2b#9Ek}_@tcp(34.23.218.229:3306)/quotes?parseTime=true"
+
+  # Security (use Secret Manager for sensitive data)
+  JWT_SECRET: "your-production-jwt-secret-here"
+
+  # CORS Configuration
+  CORS_ALLOWED_ORIGIN: "https://your-frontend-domain.com"
+
+  # Debug Configuration
+  DEBUG: "false"
+  LOG_LEVEL: "error"
+
+  # Legacy (keep for backward compatibility)
+  PROJECT_ID: "quotes-api-100"
+  APP_ENV: "production"
