@@ -85,13 +85,27 @@ func (h *ConfigHandler) UpdateIncome(c *gin.Context) {
 	}
 
 	// Update salary using use case for specified month
-	err = h.salaryUseCase.UpdateSalary(salaryDTO.MonthlyAmount, monthParam)
+	err = h.salaryUseCase.UpdateSalary(salaryDTO.MonthlyAmount, monthParam, salaryDTO.Currency)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		statusCode := http.StatusInternalServerError
+		// Check for validation errors
+		if err.Error() == "currency must be a 3-character code" ||
+		   err.Error() == "monthly amount cannot be negative" ||
+		   err.Error() == "month is required" ||
+		   err.Error() == "invalid month format, must be YYYY-MM" {
+			statusCode = http.StatusBadRequest
+		}
+		
+		c.JSON(statusCode, gin.H{
 			"error":   "Error updating income configuration",
 			"details": err.Error(),
 		})
 		return
+	}
+
+	// Ensure response has the processed currency (could be defaulted to COP)
+	if salaryDTO.Currency == "" {
+		salaryDTO.Currency = "COP"
 	}
 
 	c.JSON(http.StatusOK, salaryDTO)

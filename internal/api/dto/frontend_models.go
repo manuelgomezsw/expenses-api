@@ -7,7 +7,7 @@ import "time"
 // SalaryDTO representa la configuración de salario para el frontend
 type SalaryDTO struct {
 	MonthlyAmount float64 `json:"monthly_amount" binding:"required,min=0"`
-	Currency      string  `json:"currency" binding:"required,len=3"`
+	Currency      string  `json:"currency,omitempty"` // Opcional, por defecto "COP"
 }
 
 // FixedExpenseDTO representa un gasto fijo para el frontend
