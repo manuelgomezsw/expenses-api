@@ -26,8 +26,8 @@ func frontendUrls(router *gin.Engine, c *container.Container) {
 		api.GET("/summary/:month", c.SummaryHandler.GetMonthlySummary)
 
 		// Configuración
-		api.GET("/config/income", c.ConfigHandler.GetIncome)
-		api.PUT("/config/income", c.ConfigHandler.UpdateIncome)
+		api.GET("/config/income/:month", c.ConfigHandler.GetIncome)
+		api.PUT("/config/income/:month", c.ConfigHandler.UpdateIncome)
 		api.GET("/config/pockets", c.ConfigHandler.GetPockets)
 		api.POST("/config/pockets", c.ConfigHandler.CreatePocket)
 		api.PUT("/config/pockets/:id", c.ConfigHandler.UpdatePocket)

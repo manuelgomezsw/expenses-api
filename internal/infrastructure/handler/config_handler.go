@@ -27,11 +27,22 @@ func NewConfigHandler(
 	}
 }
 
-// GetIncome obtiene la configuración de ingresos
-// GET /api/config/income
+// GetIncome obtiene la configuración de ingresos para un mes específico
+// GET /api/config/income/{month}
 func (h *ConfigHandler) GetIncome(c *gin.Context) {
-	// Get current month salary
-	salary, err := h.salaryUseCase.GetCurrentMonth()
+	monthParam := c.Param("month")
+
+	// Validate month format
+	_, err := time.Parse("2006-01", monthParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid month format. Use YYYY-MM",
+		})
+		return
+	}
+
+	// Get salary for specified month
+	salary, err := h.salaryUseCase.GetByMonth(monthParam)
 	if err != nil {
 		// If no salary found, return default values
 		response := dto.SalaryDTO{
@@ -50,9 +61,20 @@ func (h *ConfigHandler) GetIncome(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// UpdateIncome actualiza la configuración de ingresos
-// PUT /api/config/income
+// UpdateIncome actualiza la configuración de ingresos para un mes específico
+// PUT /api/config/income/{month}
 func (h *ConfigHandler) UpdateIncome(c *gin.Context) {
+	monthParam := c.Param("month")
+
+	// Validate month format
+	_, err := time.Parse("2006-01", monthParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid month format. Use YYYY-MM",
+		})
+		return
+	}
+
 	var salaryDTO dto.SalaryDTO
 	if err := c.ShouldBindJSON(&salaryDTO); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -62,11 +84,8 @@ func (h *ConfigHandler) UpdateIncome(c *gin.Context) {
 		return
 	}
 
-	// Get current month
-	currentMonth := time.Now().Format("2006-01")
-
-	// Update salary using use case
-	err := h.salaryUseCase.UpdateSalary(salaryDTO.MonthlyAmount, currentMonth)
+	// Update salary using use case for specified month
+	err = h.salaryUseCase.UpdateSalary(salaryDTO.MonthlyAmount, monthParam)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "Error updating income configuration",
