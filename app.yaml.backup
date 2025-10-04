@@ -1,0 +1,26 @@
+runtime: go122
+
+instance_class: F1
+service: expenses-api
+
+env_variables:
+  ENV: "production"
+  PORT: "8080"
+  DEBUG: "false"
+  LOG_LEVEL: "info"
+  
+  # CORS - ajustar según necesites
+  CORS_ALLOWED_ORIGIN: "*"
+  
+  # JWT Secret temporal (mejorar después con Secret Manager)
+  JWT_SECRET: "expenses-api-production-secret-2024-change-later"
+
+# Conexión a Cloud SQL usando unix socket
+beta_settings:
+  cloud_sql_instances: "quotes-api-100:us-east1:quotes-instance"
+
+# Automatic scaling
+automatic_scaling:
+  min_instances: 0
+  max_instances: 2
+  target_cpu_utilization: 0.65

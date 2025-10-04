@@ -52,7 +52,7 @@ func LoadConfig() *Config {
 		DBHost:     getEnvOrDefault("DB_HOST", "localhost:3306"),
 		DBUser:     getEnvOrDefault("DB_USER", "root"),
 		DBPassword: getEnvOrDefault("DB_PASSWORD", ""),
-		DBName:     getEnvOrDefault("DB_NAME", "expenses_db"),
+		DBName:     getEnvOrDefault("DB_NAME_EXPENSES", "expenses_db"),
 		DBDSN:      getEnvOrDefault("DB_DSN", ""), // For GCP
 
 		// Security
@@ -110,7 +110,7 @@ func (c *Config) validate() error {
 			return fmt.Errorf("DB_PASSWORD is required")
 		}
 		if c.DBName == "" {
-			return fmt.Errorf("DB_NAME is required")
+			return fmt.Errorf("DB_NAME_EXPENSES is required")
 		}
 	}
 

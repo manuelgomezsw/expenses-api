@@ -92,7 +92,7 @@ go mod tidy         # Tidy dependencies
 DB_HOST=localhost:3306
 DB_USER=root
 DB_PASSWORD=your_password_here
-DB_NAME=expenses_db
+DB_NAME_EXPENSES=expenses_db
 ```
 
 ### **Database Setup:**

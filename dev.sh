@@ -36,7 +36,7 @@ export PORT=8080
 export DB_HOST=localhost:3306
 export DB_USER=root
 export DB_PASSWORD=${DB_PASSWORD:-"your_password_here"}
-export DB_NAME=expenses_db
+export DB_NAME_EXPENSES=expenses_db
 export JWT_SECRET=dev-secret
 export CORS_ALLOWED_ORIGIN=http://localhost:4200
 
@@ -55,7 +55,7 @@ case "${1:-run}" in
         echo ""
         echo "🚀 Starting Expenses API..."
         echo "📍 Server will run on: http://localhost:$PORT"
-        echo "🗄️  Database: $DB_HOST/$DB_NAME"
+        echo "🗄️  Database: $DB_HOST/$DB_NAME_EXPENSES"
         echo ""
         print_warning "Make sure your database is running and configured!"
         echo ""

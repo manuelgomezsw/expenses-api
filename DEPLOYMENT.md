@@ -30,7 +30,7 @@ PORT=8080
 DB_HOST=localhost:3306
 DB_USER=root
 DB_PASSWORD=your_local_password
-DB_NAME=expenses_db
+DB_NAME_EXPENSES=expenses_db
 
 JWT_SECRET=your-dev-secret
 CORS_ALLOWED_ORIGIN=http://localhost:4200
@@ -123,7 +123,7 @@ gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
 DB_HOST=localhost:3306
 DB_USER=root
 DB_PASSWORD=your_password
-DB_NAME=expenses_db
+DB_NAME_EXPENSES=expenses_db
 ```
 
 ### **GCP Production:**
