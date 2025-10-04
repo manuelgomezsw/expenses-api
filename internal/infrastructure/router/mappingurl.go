@@ -32,6 +32,8 @@ func frontendUrls(router *gin.Engine, c *container.Container) {
 		api.POST("/config/pockets", c.ConfigHandler.CreatePocket)
 		api.PUT("/config/pockets/:id", c.ConfigHandler.UpdatePocket)
 		api.DELETE("/config/pockets/:id", c.ConfigHandler.DeletePocket)
+		api.GET("/config/daily-budget/:month", c.ConfigHandler.GetDailyBudget)
+		api.PUT("/config/daily-budget/:month", c.ConfigHandler.UpdateDailyBudget)
 
 		// Gastos fijos
 		api.GET("/fixed-expenses/:month", c.FixedExpenseHandler.GetByMonth)

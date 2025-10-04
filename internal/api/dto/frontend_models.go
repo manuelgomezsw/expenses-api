@@ -11,14 +11,15 @@ type SalaryDTO struct {
 
 // FixedExpenseDTO representa un gasto fijo para el frontend
 type FixedExpenseDTO struct {
-	ID       int        `json:"id"`
-	Name     string     `json:"name" binding:"required,min=1,max=255"`
-	Amount   float64    `json:"amount" binding:"required,min=0"`
-	DueDate  int        `json:"due_date" binding:"required,min=1,max=31"`
-	PocketID int        `json:"pocket_id" binding:"required,min=1"`
-	Month    string     `json:"month,omitempty"` // Opcional, se asigna automáticamente al mes actual
-	IsPaid   bool       `json:"is_paid"`
-	PaidDate *time.Time `json:"paid_date,omitempty"`
+	ID          int     `json:"id"`
+	PocketName  string  `json:"pocket_name"`
+	ConceptName string  `json:"concept_name" binding:"required,min=1,max=255"`
+	Amount      float64 `json:"amount" binding:"required,min=0"`
+	PaymentDay  int     `json:"payment_day" binding:"required,min=1,max=31"`
+	Month       string  `json:"month"`
+	IsPaid      bool    `json:"is_paid"`
+	PaidDate    *string `json:"paid_date"`
+	PocketID    int     `json:"pocket_id,omitempty" binding:"omitempty,min=1"` // Solo para operaciones de escritura
 }
 
 // DailyExpenseDTO representa un gasto diario para el frontend
@@ -32,10 +33,9 @@ type DailyExpenseDTO struct {
 
 // PocketDTO representa un bolsillo para el frontend
 type PocketDTO struct {
-	ID          int     `json:"id"`
-	Name        string  `json:"name" binding:"required,min=1,max=50"`
-	Budget      float64 `json:"budget" binding:"required,min=0"`
-	Description string  `json:"description" binding:"required,min=1,max=50"`
+	ID          int    `json:"id"`
+	Name        string `json:"name" binding:"required,min=1,max=255"`
+	Description string `json:"description" binding:"required,min=1"`
 }
 
 // DailyExpensesConfigDTO representa la configuración de gastos diarios

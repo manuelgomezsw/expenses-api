@@ -47,7 +47,8 @@ type DailyExpenseRepository interface {
 }
 
 // DailyExpenseConfigRepository defines the interface for daily expense config data operations
-// Used internally for summary calculations
+// Frontend endpoints: GET/PUT /api/config/daily-budget/{month}
 type DailyExpenseConfigRepository interface {
 	GetByMonth(month string) (*daily_expense_config.DailyExpenseConfig, error)
+	CreateOrUpdate(config *daily_expense_config.DailyExpenseConfig) error
 }

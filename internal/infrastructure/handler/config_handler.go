@@ -12,18 +12,21 @@ import (
 
 // ConfigHandler handles configuration-related HTTP requests
 type ConfigHandler struct {
-	salaryUseCase *usecase.SalaryUseCase
-	pocketUseCase *usecase.PocketUseCase
+	salaryUseCase             *usecase.SalaryUseCase
+	pocketUseCase             *usecase.PocketUseCase
+	dailyExpenseConfigUseCase *usecase.DailyExpenseConfigUseCase
 }
 
 // NewConfigHandler creates a new config handler instance
 func NewConfigHandler(
 	salaryUseCase *usecase.SalaryUseCase,
 	pocketUseCase *usecase.PocketUseCase,
+	dailyExpenseConfigUseCase *usecase.DailyExpenseConfigUseCase,
 ) *ConfigHandler {
 	return &ConfigHandler{
-		salaryUseCase: salaryUseCase,
-		pocketUseCase: pocketUseCase,
+		salaryUseCase:             salaryUseCase,
+		pocketUseCase:             pocketUseCase,
+		dailyExpenseConfigUseCase: dailyExpenseConfigUseCase,
 	}
 }
 
@@ -133,7 +136,7 @@ func (h *ConfigHandler) CreatePocket(c *gin.Context) {
 	}
 
 	// Create pocket using use case
-	pocket, err := h.pocketUseCase.Create(pocketDTO.Name, "")
+	pocket, err := h.pocketUseCase.Create(pocketDTO.Name, pocketDTO.Description)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Error creating pocket",
@@ -146,8 +149,7 @@ func (h *ConfigHandler) CreatePocket(c *gin.Context) {
 	responseDTO := dto.PocketDTO{
 		ID:          int(pocket.ID),
 		Name:        pocket.Name,
-		Budget:      pocketDTO.Budget,
-		Description: pocketDTO.Description,
+		Description: pocket.Description,
 	}
 
 	c.JSON(http.StatusCreated, responseDTO)
@@ -175,7 +177,7 @@ func (h *ConfigHandler) UpdatePocket(c *gin.Context) {
 	}
 
 	// Update pocket using use case
-	pocket, err := h.pocketUseCase.Update(uint(id), pocketDTO.Name, "")
+	pocket, err := h.pocketUseCase.Update(uint(id), pocketDTO.Name, pocketDTO.Description)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Error updating pocket",
@@ -188,8 +190,7 @@ func (h *ConfigHandler) UpdatePocket(c *gin.Context) {
 	responseDTO := dto.PocketDTO{
 		ID:          int(pocket.ID),
 		Name:        pocket.Name,
-		Budget:      pocketDTO.Budget,
-		Description: pocketDTO.Description,
+		Description: pocket.Description,
 	}
 
 	c.JSON(http.StatusOK, responseDTO)
@@ -221,4 +222,72 @@ func (h *ConfigHandler) DeletePocket(c *gin.Context) {
 		"message": "Pocket deleted successfully",
 		"id":      id,
 	})
+}
+
+// GetDailyBudget obtiene la configuración de presupuesto diario para un mes específico
+// GET /api/config/daily-budget/{month}
+func (h *ConfigHandler) GetDailyBudget(c *gin.Context) {
+	monthParam := c.Param("month")
+
+	// Validate month format
+	_, err := time.Parse("2006-01", monthParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid month format. Use YYYY-MM",
+		})
+		return
+	}
+
+	// Get daily expense config for specified month
+	config, err := h.dailyExpenseConfigUseCase.GetByMonth(monthParam)
+	if err != nil {
+		// If no config found, return default values
+		response := dto.DailyExpensesConfigDTO{
+			MonthlyBudget: 0,
+		}
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	response := dto.DailyExpensesConfigDTO{
+		MonthlyBudget: config.MonthlyBudget,
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// UpdateDailyBudget actualiza la configuración de presupuesto diario para un mes específico
+// PUT /api/config/daily-budget/{month}
+func (h *ConfigHandler) UpdateDailyBudget(c *gin.Context) {
+	monthParam := c.Param("month")
+
+	// Validate month format
+	_, err := time.Parse("2006-01", monthParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid month format. Use YYYY-MM",
+		})
+		return
+	}
+
+	var configDTO dto.DailyExpensesConfigDTO
+	if err := c.ShouldBindJSON(&configDTO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Invalid request body",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// Update daily budget using use case for specified month
+	err = h.dailyExpenseConfigUseCase.UpdateBudget(configDTO.MonthlyBudget, monthParam)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Error updating daily budget configuration",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, configDTO)
 }

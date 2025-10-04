@@ -5,7 +5,7 @@ import (
 	"expenses-api/internal/infrastructure/database"
 	"expenses-api/internal/infrastructure/handler"
 	"expenses-api/internal/infrastructure/repository"
-	
+
 	"gorm.io/gorm"
 )
 
@@ -15,18 +15,19 @@ type Container struct {
 	DB *gorm.DB
 
 	// Repositories
-	SalaryRepo            *repository.SalaryRepository
-	PocketRepo            *repository.PocketRepository
-	FixedExpenseRepo      *repository.FixedExpenseRepository
-	DailyExpenseRepo      *repository.DailyExpenseRepository
+	SalaryRepo             *repository.SalaryRepository
+	PocketRepo             *repository.PocketRepository
+	FixedExpenseRepo       *repository.FixedExpenseRepository
+	DailyExpenseRepo       *repository.DailyExpenseRepository
 	DailyExpenseConfigRepo *repository.DailyExpenseConfigRepository
 
 	// Use Cases
-	SalaryUseCase       *usecase.SalaryUseCase
-	PocketUseCase       *usecase.PocketUseCase
-	FixedExpenseUseCase *usecase.FixedExpenseUseCase
-	DailyExpenseUseCase *usecase.DailyExpenseUseCase
-	SummaryUseCase      *usecase.SummaryUseCase
+	SalaryUseCase             *usecase.SalaryUseCase
+	PocketUseCase             *usecase.PocketUseCase
+	FixedExpenseUseCase       *usecase.FixedExpenseUseCase
+	DailyExpenseUseCase       *usecase.DailyExpenseUseCase
+	DailyExpenseConfigUseCase *usecase.DailyExpenseConfigUseCase
+	SummaryUseCase            *usecase.SummaryUseCase
 
 	// Handlers
 	ConfigHandler       *handler.ConfigHandler
@@ -55,7 +56,8 @@ func NewContainer() (*Container, error) {
 	container.PocketUseCase = usecase.NewPocketUseCase(container.PocketRepo)
 	container.FixedExpenseUseCase = usecase.NewFixedExpenseUseCase(container.FixedExpenseRepo)
 	container.DailyExpenseUseCase = usecase.NewDailyExpenseUseCase(container.DailyExpenseRepo)
-	
+	container.DailyExpenseConfigUseCase = usecase.NewDailyExpenseConfigUseCase(container.DailyExpenseConfigRepo)
+
 	// Summary use case needs multiple repositories
 	container.SummaryUseCase = usecase.NewSummaryUseCase(
 		container.SalaryRepo,
@@ -68,6 +70,7 @@ func NewContainer() (*Container, error) {
 	container.ConfigHandler = handler.NewConfigHandler(
 		container.SalaryUseCase,
 		container.PocketUseCase,
+		container.DailyExpenseConfigUseCase,
 	)
 	container.SummaryHandler = handler.NewSummaryHandler(container.SummaryUseCase)
 	container.FixedExpenseHandler = handler.NewFixedExpenseHandler(container.FixedExpenseUseCase)

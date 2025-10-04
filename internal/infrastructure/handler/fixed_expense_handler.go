@@ -50,22 +50,21 @@ func (h *FixedExpenseHandler) GetByMonth(c *gin.Context) {
 	// Convert to DTOs
 	var expenseDTOs []dto.FixedExpenseDTO
 	for _, expense := range expenses {
-		var paidDate *time.Time
-		if expense.PaidDate != nil {
-			if parsedDate, err := time.Parse("2006-01-02", *expense.PaidDate); err == nil {
-				paidDate = &parsedDate
-			}
+		// Get pocket name from the preloaded relationship
+		pocketName := ""
+		if expense.Pocket != nil {
+			pocketName = expense.Pocket.Name
 		}
 
 		expenseDTOs = append(expenseDTOs, dto.FixedExpenseDTO{
-			ID:       int(expense.ID),
-			Name:     expense.ConceptName,
-			Amount:   expense.Amount,
-			DueDate:  expense.PaymentDay,
-			PocketID: int(expense.PocketID),
-			Month:    expense.Month,
-			IsPaid:   expense.IsPaid,
-			PaidDate: paidDate,
+			ID:          int(expense.ID),
+			PocketName:  pocketName,
+			ConceptName: expense.ConceptName,
+			Amount:      expense.Amount,
+			PaymentDay:  expense.PaymentDay,
+			Month:       expense.Month,
+			IsPaid:      expense.IsPaid,
+			PaidDate:    expense.PaidDate,
 		})
 	}
 
@@ -143,9 +142,9 @@ func (h *FixedExpenseHandler) Create(c *gin.Context) {
 
 	// Convert DTO to domain model
 	expense := &fixed_expense.FixedExpense{
-		ConceptName: expenseDTO.Name,
+		ConceptName: expenseDTO.ConceptName,
 		Amount:      expenseDTO.Amount,
-		PaymentDay:  expenseDTO.DueDate,
+		PaymentDay:  expenseDTO.PaymentDay,
 		PocketID:    uint(expenseDTO.PocketID),
 		Month:       time.Now().Format("2006-01"), // Siempre usar mes actual
 		IsPaid:      false,                        // Siempre false por defecto
@@ -161,16 +160,32 @@ func (h *FixedExpenseHandler) Create(c *gin.Context) {
 		return
 	}
 
+	// Get created expense with pocket information
+	createdExpense, err := h.fixedExpenseUseCase.GetByID(expense.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Error retrieving created expense",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// Get pocket name from the preloaded relationship
+	pocketName := ""
+	if createdExpense.Pocket != nil {
+		pocketName = createdExpense.Pocket.Name
+	}
+
 	// Convert back to DTO for response
 	responseDTO := dto.FixedExpenseDTO{
-		ID:       int(expense.ID),
-		Name:     expense.ConceptName,
-		Amount:   expense.Amount,
-		DueDate:  expense.PaymentDay,
-		PocketID: int(expense.PocketID),
-		Month:    expense.Month,
-		IsPaid:   expense.IsPaid,
-		PaidDate: nil,
+		ID:          int(createdExpense.ID),
+		PocketName:  pocketName,
+		ConceptName: createdExpense.ConceptName,
+		Amount:      createdExpense.Amount,
+		PaymentDay:  createdExpense.PaymentDay,
+		Month:       createdExpense.Month,
+		IsPaid:      createdExpense.IsPaid,
+		PaidDate:    createdExpense.PaidDate,
 	}
 
 	c.JSON(http.StatusCreated, responseDTO)
@@ -199,9 +214,9 @@ func (h *FixedExpenseHandler) Update(c *gin.Context) {
 
 	// Convert DTO to domain model
 	updatedExpense := &fixed_expense.FixedExpense{
-		ConceptName: expenseDTO.Name,
+		ConceptName: expenseDTO.ConceptName,
 		Amount:      expenseDTO.Amount,
-		PaymentDay:  expenseDTO.DueDate,
+		PaymentDay:  expenseDTO.PaymentDay,
 		PocketID:    uint(expenseDTO.PocketID),
 		Month:       time.Now().Format("2006-01"), // Siempre usar mes actual
 	}
@@ -240,23 +255,22 @@ func (h *FixedExpenseHandler) Update(c *gin.Context) {
 		return
 	}
 
-	// Convert to DTO for response
-	var paidDate *time.Time
-	if updatedExpenseFromDB.PaidDate != nil {
-		if parsedDate, err := time.Parse("2006-01-02", *updatedExpenseFromDB.PaidDate); err == nil {
-			paidDate = &parsedDate
-		}
+	// Get pocket name from the preloaded relationship
+	pocketName := ""
+	if updatedExpenseFromDB.Pocket != nil {
+		pocketName = updatedExpenseFromDB.Pocket.Name
 	}
 
+	// Convert to DTO for response
 	responseDTO := dto.FixedExpenseDTO{
-		ID:       int(updatedExpenseFromDB.ID),
-		Name:     updatedExpenseFromDB.ConceptName,
-		Amount:   updatedExpenseFromDB.Amount,
-		DueDate:  updatedExpenseFromDB.PaymentDay,
-		PocketID: int(updatedExpenseFromDB.PocketID),
-		Month:    updatedExpenseFromDB.Month,
-		IsPaid:   updatedExpenseFromDB.IsPaid,
-		PaidDate: paidDate,
+		ID:          int(updatedExpenseFromDB.ID),
+		PocketName:  pocketName,
+		ConceptName: updatedExpenseFromDB.ConceptName,
+		Amount:      updatedExpenseFromDB.Amount,
+		PaymentDay:  updatedExpenseFromDB.PaymentDay,
+		Month:       updatedExpenseFromDB.Month,
+		IsPaid:      updatedExpenseFromDB.IsPaid,
+		PaidDate:    updatedExpenseFromDB.PaidDate,
 	}
 
 	c.JSON(http.StatusOK, responseDTO)
