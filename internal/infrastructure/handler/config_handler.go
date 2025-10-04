@@ -32,6 +32,7 @@ func NewConfigHandler(
 
 // GetIncome obtiene la configuración de ingresos para un mes específico
 // GET /api/config/income/{month}
+// Implementa herencia automática del mes anterior si no existe configuración
 func (h *ConfigHandler) GetIncome(c *gin.Context) {
 	monthParam := c.Param("month")
 
@@ -44,10 +45,10 @@ func (h *ConfigHandler) GetIncome(c *gin.Context) {
 		return
 	}
 
-	// Get salary for specified month
-	salary, err := h.salaryUseCase.GetByMonth(monthParam)
+	// Get salary with inheritance
+	salary, err := h.salaryUseCase.GetByMonthWithInheritance(monthParam)
 	if err != nil {
-		// If no salary found, return default values
+		// Si no hay configuración ni herencia, retornar valores por defecto
 		response := dto.SalaryDTO{
 			MonthlyAmount: 0,
 		}
@@ -226,6 +227,7 @@ func (h *ConfigHandler) DeletePocket(c *gin.Context) {
 
 // GetDailyBudget obtiene la configuración de presupuesto diario para un mes específico
 // GET /api/config/daily-budget/{month}
+// Implementa herencia automática del mes anterior si no existe configuración
 func (h *ConfigHandler) GetDailyBudget(c *gin.Context) {
 	monthParam := c.Param("month")
 
@@ -238,10 +240,10 @@ func (h *ConfigHandler) GetDailyBudget(c *gin.Context) {
 		return
 	}
 
-	// Get daily expense config for specified month
-	config, err := h.dailyExpenseConfigUseCase.GetByMonth(monthParam)
+	// Get daily expense config with inheritance
+	config, err := h.dailyExpenseConfigUseCase.GetByMonthWithInheritance(monthParam)
 	if err != nil {
-		// If no config found, return default values
+		// Si no hay configuración ni herencia, retornar valores por defecto
 		response := dto.DailyExpensesConfigDTO{
 			MonthlyBudget: 0,
 		}

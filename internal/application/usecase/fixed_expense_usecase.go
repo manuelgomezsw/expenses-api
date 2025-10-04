@@ -34,6 +34,51 @@ func (uc *FixedExpenseUseCase) GetByMonth(month string) ([]fixed_expense.FixedEx
 	return uc.fixedExpenseRepo.GetByMonth(month)
 }
 
+// GetByMonthWithInheritance obtiene gastos fijos de un mes, heredando del anterior si no existen
+func (uc *FixedExpenseUseCase) GetByMonthWithInheritance(month string) ([]fixed_expense.FixedExpense, error) {
+	if month == "" {
+		return nil, errors.New("month is required")
+	}
+
+	// Validate month format
+	date, err := time.Parse("2006-01", month)
+	if err != nil {
+		return nil, errors.New("invalid month format, must be YYYY-MM")
+	}
+
+	// Intentar obtener gastos del mes actual
+	currentExpenses, err := uc.fixedExpenseRepo.GetByMonth(month)
+	if err == nil && len(currentExpenses) > 0 {
+		return currentExpenses, nil
+	}
+
+	// Si no existen, buscar mes anterior
+	previousMonth := date.AddDate(0, -1, 0).Format("2006-01")
+	previousExpenses, err := uc.fixedExpenseRepo.GetByMonth(previousMonth)
+	if err != nil || len(previousExpenses) == 0 {
+		// No hay configuración anterior, retornar array vacío
+		return []fixed_expense.FixedExpense{}, nil
+	}
+
+	// Heredar gastos adaptando campos
+	inheritedExpenses := make([]fixed_expense.FixedExpense, len(previousExpenses))
+	for i, expense := range previousExpenses {
+		inheritedExpenses[i] = fixed_expense.FixedExpense{
+			ID:          0, // Sin ID para que se genere nuevo al guardar
+			PocketID:    expense.PocketID,
+			ConceptName: expense.ConceptName,
+			Amount:      expense.Amount,
+			PaymentDay:  expense.PaymentDay,
+			IsPaid:      false,          // Reset estado de pago
+			Month:       month,          // Actualizar al mes solicitado
+			PaidDate:    nil,            // Limpiar fecha de pago
+			Pocket:      expense.Pocket, // Mantener relación para el frontend
+		}
+	}
+
+	return inheritedExpenses, nil
+}
+
 // Create creates a new fixed expense
 func (uc *FixedExpenseUseCase) Create(expense *fixed_expense.FixedExpense) error {
 	if expense == nil {

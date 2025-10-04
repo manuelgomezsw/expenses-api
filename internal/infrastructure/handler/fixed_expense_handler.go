@@ -25,6 +25,7 @@ func NewFixedExpenseHandler(fixedExpenseUseCase *usecase.FixedExpenseUseCase) *F
 
 // GetByMonth obtiene los gastos fijos de un mes específico
 // GET /api/fixed-expenses/{month}
+// Implementa herencia automática del mes anterior si no existen gastos
 func (h *FixedExpenseHandler) GetByMonth(c *gin.Context) {
 	monthParam := c.Param("month")
 
@@ -37,8 +38,8 @@ func (h *FixedExpenseHandler) GetByMonth(c *gin.Context) {
 		return
 	}
 
-	// Get fixed expenses using use case
-	expenses, err := h.fixedExpenseUseCase.GetByMonth(monthParam)
+	// Get fixed expenses with inheritance
+	expenses, err := h.fixedExpenseUseCase.GetByMonthWithInheritance(monthParam)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "Error getting fixed expenses",
@@ -57,14 +58,14 @@ func (h *FixedExpenseHandler) GetByMonth(c *gin.Context) {
 		}
 
 		expenseDTOs = append(expenseDTOs, dto.FixedExpenseDTO{
-			ID:          int(expense.ID),
+			ID:          int(expense.ID), // Será 0 si es heredado
 			PocketName:  pocketName,
 			ConceptName: expense.ConceptName,
 			Amount:      expense.Amount,
 			PaymentDay:  expense.PaymentDay,
-			Month:       expense.Month,
-			IsPaid:      expense.IsPaid,
-			PaidDate:    expense.PaidDate,
+			Month:       expense.Month,    // Siempre el mes solicitado
+			IsPaid:      expense.IsPaid,   // Será false si es heredado
+			PaidDate:    expense.PaidDate, // Será nil si es heredado
 		})
 	}
 
